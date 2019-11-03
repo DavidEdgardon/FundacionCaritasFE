@@ -283,5 +283,5 @@ class FormPatients extends Component {
     );
   }
 }
-//e
+
 export default FormPatients;
