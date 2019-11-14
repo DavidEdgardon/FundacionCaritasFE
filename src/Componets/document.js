@@ -21,6 +21,7 @@ let omm = '';
 let ong = '';
 let juzgado = '';
 let fiscal = '';
+let nexpediente = '';
 
 export class Form3 extends Component {
 
@@ -178,12 +179,6 @@ export class Form3 extends Component {
                                     <p className="c13"><span className="c7">{vurbana} {vrural}</span></p>
                                 </td>
                             </tr>
-                            <tr className="c9">
-                                <td className="c6" colSpan="6" rowSpan="1">
-                                    <p className="c2"><span className="c8">ACCESO A LA JUSTICIA</span></p>
-                                    <p className="c13"><span className="c7"> {umep} {omm} {ong} {juzgado} {fiscal}</span></p>
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                     <p className="c5 c19"><span className="c3"></span></p>
@@ -249,6 +244,7 @@ export class Form3 extends Component {
                             </tr>
                         </tbody>
                     </table>
+                    <p className="c5 c19"><span className="c3"></span></p>
                     <p className="c5"><span className="c11">2. Datos Econ&oacute;micos </span></p>
                     <p className="c5"><span className="c11">A) Ingresos Mensuales por unidad familiar</span></p>
                     <table className="c16">
@@ -278,8 +274,10 @@ export class Form3 extends Component {
                                 <td className="c21" colSpan="1" rowSpan="1">
                                     <p className="c2"><span className="c14">DESCRIPCI&Oacute;N DE ATENCI&Oacute;N PSICOL&Oacute;GICA</span></p>
                                     <p className="c13"><span className="c7">Remitido de: {vals.Remision}</span></p>
+                                    <p className="c13"><span className="c7">N&uacute;mero de Expediente: {nexpediente}</span></p>
                                     <p className="c13"><span className="c7">Tipo de Violencia: {vpsicologica} {vfisica} {veconomica} {vsexual} </span></p>
-                                    <p className="c13"><span className="c7">Condici&oacute;n de la persona: {victima} {agresor} </span></p>
+                                    <p className="c13"><span className="c7">Condici&oacute;n de la Persona: {victima} {agresor} </span></p>
+                                    <p className="c13"><span className="c7">Acceso a la Justicia: {umep} {omm} {ong} {juzgado} {fiscal} </span></p>
                                 </td>
                             </tr>
                             <tr className="c20">
@@ -307,3 +305,4 @@ export class Form3 extends Component {
 }
 
 export default Form3
+
