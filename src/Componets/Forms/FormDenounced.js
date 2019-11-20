@@ -74,7 +74,7 @@ class FormDenounced extends Component {
 
                     <Card style={{backgroundColor: card_background}}>
                         <div style={{ textAlign: 'center' }}>
-                            <h3> &nbsp; Informacion del denunciado </h3>
+                            <h3> &nbsp; Informacion de la pareja </h3>
                         </div>
                         <CardContent>
                             <Grid container  spacing={1} >
@@ -118,7 +118,7 @@ class FormDenounced extends Component {
                             <Grid container spacing={1} >
                                 <Grid item sm={6} >
                                     <Paper>
-                                    <NativeSelect disableUnderline={true} id="departamento" fullWidth onChange={e => handleChange(e, "DepartamentoD")} value={vals.Departamento}>
+                                    <NativeSelect disableUnderline={true} id="departamento" fullWidth onChange={e => handleChange(e, "DepartamentoD")} value={vals.DepartamentoD}>
                                         <option value="" disabled> Departamento </option>
                                     {this.generateDepartamentos()}
                                      </NativeSelect>
@@ -142,7 +142,7 @@ class FormDenounced extends Component {
                             <Grid container  spacing={1} >
                                 <Grid item sm={4}>
                                     <Paper>
-                                        <NativeSelect disableUnderline={true} id="estado-civil" fullWidth onChange={(e)=>handleChange(e,'EstadoCivilD')} value={vals.EstadoCivil}>
+                                        <NativeSelect disableUnderline={true} id="estado-civil" fullWidth onChange={(e)=>handleChange(e,'EstadoCivilD')} value={vals.EstadoCivilD}>
                                             <option value="" disabled>
                                                 Estado civil
                                             </option>
@@ -152,7 +152,7 @@ class FormDenounced extends Component {
                                 </Grid>
                                 <Grid item sm={4}>
                                     <Paper>
-                                        <NativeSelect disableUnderline={true} id="educacion" fullWidth onChange={(e)=>handleChange(e,'EducacionD')} value={vals.Educacion} >
+                                        <NativeSelect disableUnderline={true} id="educacion" fullWidth onChange={(e)=>handleChange(e,'EducacionD')} value={vals.EducacionD} >
                                             <option value="" disabled>
                                                     Nivel de educacion
                                             </option>    
