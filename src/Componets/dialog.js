@@ -65,32 +65,31 @@ class FullScreenDialog extends Component   {
     this.setState({ [input]: event.target.value });
     
   };
-    openDialog = e => {
-        
-        this.props.handleClickOpen();
-      };  
+  openDialog = e => {
+      this.props.handleClickOpen();
+  };  
       
-      CloseDialog = e => {
-        
-        console.log('close');
-        this.props.handleClose();
-      };  
+  CloseDialog = e => {
+    console.log('close');
+    this.props.handleClose();
+  };
+    
 componentDidMount=(e)=>{
-  this.setState({Id: this.props.vals.selectedRow[0].Id});
+  /*this.setState({Id: this.props.vals.selectedRow[0].Id});
   this.setState({Nombre:this.props.vals.selectedRow[0].Nombre});
   this.setState({id:this.props.vals.selectedRow[0].Id});
   this.setState({Edad:this.props.vals.selectedRow[0].Edad});
   this.setState({Oficio:this.props.vals.selectedRow[0].Oficio});
   this.setState({Genero:this.props.vals.selectedRow[0].Genero});
   this.setState({Estado:this.props.vals.selectedRow[0].Estado});
-  console.log("el id seleccionado es: "+this.props.vals.selectedRow[0].Id);
+  console.log("el id seleccionado es: "+this.props.vals.selectedRow[0].Id);*/
 
-  fetch('https://apicaritas.herokuapp.com/api/paciente/personal/'+this.props.vals.selectedRow[0].Id)
+  /*fetch('https://apicaritas.herokuapp.com/api/paciente/personal/'+this.props.vals.selectedRow[0].Id)
     .then(res => res.json()).then(data =>
        this.setState({extraData: data}))
     .catch(function (error) {
           console.log(error);
-    })
+    })*/
 }
   
 render(){

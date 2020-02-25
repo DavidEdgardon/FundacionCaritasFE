@@ -9,9 +9,12 @@ import Clear from '@material-ui/icons/Clear';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
 import MaterialTable from 'material-table';
+import PacientHistory from './HistorialPaciente';
 import Dialog from '../dialog';
 import Mayre from 'mayre';
 import Axios from 'axios';
+import Button from '@material-ui/core/Button';
+import HistorialPaciente from './HistorialPaciente';
 
 const port = 'http://localhost:3001/';
 
@@ -71,11 +74,18 @@ class Pacients extends Component {
     super(props);
     this.state = {
       list: [],
+      show : false,
       selectedRow: null,
       open: false,
+      open2:false,
+      hide:false,
       isLoading: false
     }
   }
+  handleModal(){
+    this.setState({show:!this.state.show})
+  }
+
   componentDidMount = async () => {
     await this.fetchPacientsData();
   }
@@ -92,9 +102,22 @@ class Pacients extends Component {
 
   handleClickOpen = () => {
     this.setState({ open: true });
+    this.setState({ hide: true });
   };
+
+  handleClickOpen2 = () => {
+    this.setState({ open2: true });
+    this.setState({ hide: true });
+  };
+
   handleClose = () => {
     this.setState({ open: false });
+    this.setState({ hide: false });
+  };
+
+  handleClose2 = () => {
+    this.setState({ open2: false });
+    this.setState({ hide: false });
   };
 
   datas = (selectedRow) => {
@@ -103,8 +126,8 @@ class Pacients extends Component {
   }
 
   render() {
-    const { open, selectedRow } = this.state;
-    const vals = { open, selectedRow };
+    const { open,open2,hide, selectedRow } = this.state;
+    const vals = { open,open2,hide, selectedRow };
     const pagination = {
       pagination: {
         labelDisplayedRows: "{from}-{to} de {count}",
@@ -130,7 +153,8 @@ class Pacients extends Component {
     }
 
     return (
-      <Mayre
+      <React.Fragment>
+        <Mayre
         of={
           <div style={{ width: "100%" }}>
             <MaterialTable
@@ -142,15 +166,29 @@ class Pacients extends Component {
               onRowClick={((evt, selectedRow) => this.datas(selectedRow))}
               localization={pagination}
             />
-
           </div>}
         or={<Dialog handleClickOpen={this.handleClickOpen} handleClose={this.handleClose} vals={vals} />}
-        when={!open}
+        when={!hide}
+        
       />
 
-    );
+    <Mayre
+        of={    
+          <Button variant="outlined" color="primary" onClick={this.handleClickOpen2}>
+          Dialogo
+          </Button>
+          }
+        or={<PacientHistory handleClickOpen={this.handleClickOpen2} handleClose={this.handleClose2} vals={vals} />}
+        when={!hide}
+      />
 
+      </React.Fragment>
+      
+      
 
+      
+     
+    )
   }
 }
 
