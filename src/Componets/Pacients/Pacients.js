@@ -14,7 +14,7 @@ import Dialog from '../dialog';
 import Mayre from 'mayre';
 import Axios from 'axios';
 import Button from '@material-ui/core/Button';
-import HistorialPaciente from './HistorialPaciente';
+
 
 const port = 'http://localhost:3001/';
 
@@ -181,13 +181,7 @@ class Pacients extends Component {
         or={<PacientHistory handleClickOpen={this.handleClickOpen2} handleClose={this.handleClose2} vals={vals} />}
         when={!hide}
       />
-
-      </React.Fragment>
-      
-      
-
-      
-     
+      </React.Fragment>    
     )
   }
 }
