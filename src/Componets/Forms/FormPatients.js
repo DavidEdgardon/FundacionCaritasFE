@@ -9,6 +9,7 @@ import Button from "@material-ui/core/Button";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import InputLabel from "@material-ui/core/InputLabel";
 import grey from "@material-ui/core/colors/grey";
+import MaterialTable from 'material-table';
 const port = "http://localhost:3001/api";
 
 class FormPatients extends Component {
@@ -90,13 +91,17 @@ class FormPatients extends Component {
     });
   };
 
+  initTable = () =>{
+    
+  }
+
   render() {
     const { vals, handleChange } = this.props;
     const card_background = grey[200];
     return (
       <div>
         <Grid
-          container
+          co  ntainer
           justify="flex-end"
           style={{ width: "70%", alignSelf: "center", margin: "2%" }}
         >
