@@ -9,7 +9,8 @@ import Button from "@material-ui/core/Button";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import InputLabel from "@material-ui/core/InputLabel";
 import grey from "@material-ui/core/colors/grey";
-import MaterialTable from 'material-table';
+import MaterialTable from "material-table";
+
 const port = "http://localhost:3001/api";
 
 class FormPatients extends Component {
@@ -91,9 +92,7 @@ class FormPatients extends Component {
     });
   };
 
-  initTable = () =>{
-    
-  }
+  initTable = () => {};
 
   render() {
     const { vals, handleChange } = this.props;
@@ -101,7 +100,8 @@ class FormPatients extends Component {
     return (
       <div>
         <Grid
-          co  ntainer
+          co
+          ntainer
           justify="flex-end"
           style={{ width: "70%", alignSelf: "center", margin: "2%" }}
         >
@@ -178,23 +178,21 @@ class FormPatients extends Component {
                     </Paper>
                   </Grid>
 
-                 
-                    <Grid item sm={6}>
-                      <Paper>
-                        <NativeSelect
-                          disableUnderline={true}
-                          id="beneficiario-parroquia"
-                          fullWidth
-                          onChange={e => handleChange(e, "Parroquia")}
-                          value={vals.Parroquia}
-                        >
-                          <option value="" disabled>
-                            Beneficiario por parroquia
-                          </option>
-                          {this.generateParroquiaType()}
-                        </NativeSelect>
-                      </Paper>
-        
+                  <Grid item sm={6}>
+                    <Paper>
+                      <NativeSelect
+                        disableUnderline={true}
+                        id="beneficiario-parroquia"
+                        fullWidth
+                        onChange={e => handleChange(e, "Parroquia")}
+                        value={vals.Parroquia}
+                      >
+                        <option value="" disabled>
+                          Beneficiario por parroquia
+                        </option>
+                        {this.generateParroquiaType()}
+                      </NativeSelect>
+                    </Paper>
                   </Grid>
                 </Grid>
               </CardContent>
@@ -336,7 +334,9 @@ class FormPatients extends Component {
                 <Grid container alignContent="center" spacing={1}>
                   <Grid item sm={3}>
                     <InputLabel htmlFor="tipo-condicion">
-                      {" "}&nbsp;Beneficiados Indirectos</InputLabel>
+                      {" "}
+                      &nbsp;Beneficiados Indirectos
+                    </InputLabel>
                   </Grid>
                   <Grid item sm={3}>
                     <Paper>
