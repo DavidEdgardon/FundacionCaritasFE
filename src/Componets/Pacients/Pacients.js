@@ -100,6 +100,13 @@ class Pacients extends Component {
     console.log(selectedRow);
   };
 
+  goToAuditoria = selectedRow => {
+    this.setState({ selectedRow: [selectedRow.rowData] });
+    this.handleClickOpen2();
+    console.log(selectedRow.rowData["id_paciente"]);
+    console.log(selectedRow);
+  };
+
   render() {
     const { open, open2, hide, selectedRow } = this.state;
     const vals = { open, open2, hide, selectedRow };
@@ -136,7 +143,7 @@ class Pacients extends Component {
             <Grid container spacing={3}>
               <Grid item xs={3}>
                 <Tooltip title="Información">
-                  <IconButton>
+                  <IconButton onClick={() => this.goToAuditoria({ rowData })}>
                     <Info color="secondary"></Info>
                   </IconButton>
                 </Tooltip>
@@ -230,20 +237,12 @@ class Pacients extends Component {
         />
 
         <Mayre
-          of={
-            <Button
-              variant="outlined"
-              color="primary"
-              onClick={this.handleClickOpen2}
-            >
-              Dialogo
-            </Button>
-          }
+          of={<div></div>}
           or={
             <PacientHistory
               handleClickOpen={this.handleClickOpen2}
               handleClose={this.handleClose2}
-              vals={vals}
+              vals={this.state}
             />
           }
           when={!hide}

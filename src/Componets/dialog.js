@@ -14,6 +14,7 @@ import axios from "axios";
 
 // const url = 'http://apicaritas.herokuapp.com/api/paciente/';
 const url = "https://apicaritas.herokuapp.com/api/paciente/";
+const port = "http://localhost:3001/";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -233,7 +234,7 @@ class FullScreenDialog extends Component {
               </Typography>
             </Toolbar>
           </AppBar>
-
+          {!vals.open ? <h1>True</h1> : <h1>false</h1>}
           <Form vals={formval} handleChange={this.handleChange} />
           <Fab
             color="primary"
