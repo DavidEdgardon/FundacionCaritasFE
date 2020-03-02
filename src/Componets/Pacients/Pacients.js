@@ -21,8 +21,7 @@ import Edit from "@material-ui/icons/Edit";
 import Tooltip from "@material-ui/core/Tooltip";
 import MaterialTable from "material-table";
 import Grid from "@material-ui/core/Grid";
-
-import HistorialPaciente from "./HistorialPaciente";
+import ReportPantientDialog from "./ReportPantientDialog";
 
 const port = "http://localhost:3001/";
 
@@ -48,6 +47,8 @@ class Pacients extends Component {
       selectedRow: null,
       open: false,
       open2: false,
+      openReport: false,
+      isAbandon: false,
       hide: false,
       isLoading: false
     };
@@ -83,6 +84,10 @@ class Pacients extends Component {
     //this.setState({ hide: true });
   };
 
+  handleClickOpenReport = () => {
+    this.setState({ openReport: true, hide: true });
+  };
+
   handleClose = () => {
     this.setState({ open: false, hide: false });
     //this.setState({ hide: false });
@@ -90,6 +95,11 @@ class Pacients extends Component {
 
   handleClose2 = () => {
     this.setState({ open2: false, hide: false });
+    //this.setState({ hide: false });
+  };
+
+  handleCloseReport = () => {
+    this.setState({ openReport: false, hide: false });
     //this.setState({ hide: false });
   };
 
@@ -103,6 +113,13 @@ class Pacients extends Component {
   goToAuditoria = selectedRow => {
     this.setState({ selectedRow: [selectedRow.rowData] });
     this.handleClickOpen2();
+    console.log(selectedRow.rowData["id_paciente"]);
+    console.log(selectedRow);
+  };
+
+  goToReport = (selectedRow, isAbandon) => {
+    this.setState({ selectedRow: [selectedRow.rowData], isAbandon: isAbandon });
+    this.handleClickOpenReport();
     console.log(selectedRow.rowData["id_paciente"]);
     console.log(selectedRow);
   };
@@ -157,14 +174,18 @@ class Pacients extends Component {
               </Grid>
               <Grid item xs={3}>
                 <Tooltip title="Abandono">
-                  <IconButton>
+                  <IconButton
+                    onClick={() => this.goToReport({ rowData }, true)}
+                  >
                     <Cancel color="secondary"></Cancel>
                   </IconButton>
                 </Tooltip>
               </Grid>
               <Grid item xs={3}>
                 <Tooltip title="Terminado">
-                  <IconButton>
+                  <IconButton
+                    onClick={() => this.goToReport({ rowData }, false)}
+                  >
                     <CheckCircle color="secondary"></CheckCircle>
                   </IconButton>
                 </Tooltip>
@@ -242,6 +263,18 @@ class Pacients extends Component {
             <PacientHistory
               handleClickOpen={this.handleClickOpen2}
               handleClose={this.handleClose2}
+              vals={this.state}
+            />
+          }
+          when={!hide}
+        />
+
+        <Mayre
+          of={<div></div>}
+          or={
+            <ReportPantientDialog
+              handleClickOpen={this.handleClickOpenReport}
+              handleClose={this.handleCloseReport}
               vals={this.state}
             />
           }

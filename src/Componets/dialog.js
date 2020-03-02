@@ -234,6 +234,7 @@ class FullScreenDialog extends Component {
               </Typography>
             </Toolbar>
           </AppBar>
+          <doc></doc>
           {!vals.open ? <h1>True</h1> : <h1>false</h1>}
           <Form vals={formval} handleChange={this.handleChange} />
           <Fab
