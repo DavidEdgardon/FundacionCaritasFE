@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Dialog from "@material-ui/core/Dialog";
-import Form from "./Forms/FormPatients";
+import Form from "./Forms/FormPatientsEdit";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
@@ -144,7 +144,7 @@ class FullScreenDialog extends Component {
     this.setState({ Nombre: this.props.vals.selectedRow[0].nombre });
     let apellido = this.props.vals.selectedRow[0].apellido;
     this.getApellidos(String(apellido));
-    this.setState({ Apellido: this.props.vals.selectedRow[0].apellido });
+    this.setState({ NumeroIdent: this.props.vals.selectedRow[0].identidad });
     this.setState({ Edad: this.props.vals.selectedRow[0].edad });
     this.setState({ Oficio: this.props.vals.selectedRow[0].oficio });
     this.setState({ Genero: this.props.vals.selectedRow[0].genero });
