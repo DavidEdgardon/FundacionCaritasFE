@@ -9,7 +9,6 @@ import Button from "@material-ui/core/Button";
 class appBar extends Component {
   render() {
     const { values, rol } = this.props;
-    console.log("rol appbar: ", rol);
     if (rol === "Administrador") {
       return (
         <div>

@@ -10,9 +10,7 @@ import ViewColumn from "@material-ui/icons/ViewColumn";
 import ArrowUpward from "@material-ui/icons/ArrowUpward";
 import PacientHistory from "./HistorialPaciente";
 import Dialog from "../dialog";
-import Mayre from "mayre";
 import Axios from "axios";
-import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import Info from "@material-ui/icons/Info";
 import CheckCircle from "@material-ui/icons/CheckCircle";
@@ -106,22 +104,16 @@ class Pacients extends Component {
   datas = selectedRow => {
     this.setState({ selectedRow: [selectedRow.rowData] });
     this.handleClickOpen();
-    console.log(selectedRow.rowData["id_paciente"]);
-    console.log(selectedRow);
   };
 
   goToAuditoria = selectedRow => {
     this.setState({ selectedRow: [selectedRow.rowData] });
     this.handleClickOpen2();
-    console.log(selectedRow.rowData["id_paciente"]);
-    console.log(selectedRow);
   };
 
   goToReport = (selectedRow, isAbandon) => {
     this.setState({ selectedRow: [selectedRow.rowData], isAbandon: isAbandon });
     this.handleClickOpenReport();
-    console.log(selectedRow.rowData["id_paciente"]);
-    console.log(selectedRow);
   };
 
   render() {
@@ -234,52 +226,46 @@ class Pacients extends Component {
 
     return (
       <React.Fragment>
-        <Mayre
-          of={
-            <div style={{ width: "100%" }}>
-              <MaterialTable
-                icons={tableIcons}
-                title="Pacientes"
-                columns={columns}
-                data={this.state.list}
-                isLoading={this.state.isLoading}
-                localization={pagination}
-              />
-            </div>
-          }
-          or={
-            <Dialog
-              handleClickOpen={this.handleClickOpen}
-              handleClose={this.handleClose}
-              vals={this.state}
-            />
-          }
-          when={!hide}
-        />
+        <div style={{ width: "100%" }}>
+          <MaterialTable
+            icons={tableIcons}
+            title="Pacientes"
+            columns={columns}
+            data={this.state.list}
+            isLoading={this.state.isLoading}
+            localization={pagination}
+          />
+        </div>
 
-        <Mayre
-          of={<div></div>}
-          or={
-            <PacientHistory
-              handleClickOpen={this.handleClickOpen2}
-              handleClose={this.handleClose2}
-              vals={this.state}
-            />
-          }
-          when={!hide}
-        />
+        {this.state.open ? (
+          <Dialog
+            handleClickOpen={this.handleClickOpen}
+            handleClose={this.handleClose}
+            vals={this.state}
+          />
+        ) : (
+          <div></div>
+        )}
 
-        <Mayre
-          of={<div></div>}
-          or={
-            <ReportPantientDialog
-              handleClickOpen={this.handleClickOpenReport}
-              handleClose={this.handleCloseReport}
-              vals={this.state}
-            />
-          }
-          when={!hide}
-        />
+        {this.state.open2 ? (
+          <PacientHistory
+            handleClickOpen={this.handleClickOpen2}
+            handleClose={this.handleClose2}
+            vals={this.state}
+          />
+        ) : (
+          <div></div>
+        )}
+
+        {this.state.openReport ? (
+          <ReportPantientDialog
+            handleClickOpen={this.handleClickOpenReport}
+            handleClose={this.handleCloseReport}
+            vals={this.state}
+          />
+        ) : (
+          <div></div>
+        )}
       </React.Fragment>
     );
   }

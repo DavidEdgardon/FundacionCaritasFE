@@ -7,12 +7,18 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
-import Axios from "axios";
+//import Axios from "axios";
 import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import Button from "@material-ui/core/Button";
+import PrintIcon from "@material-ui/icons/Print";
+import { Row, Col, Container } from "react-bootstrap";
+import "../../styles/dialogReport.css";
+import logo from "../../assets/logocaritas.png";
 
-const url = "https://apicaritas.herokuapp.com/api/paciente/";
+/*const url = "https://apicaritas.herokuapp.com/api/paciente/";
 const port = "http://localhost:3001/api/historial/";
-const portAuditoria = "http://localhost:3001/api/auditoria/paciente/";
+const portAuditoria = "http://localhost:3001/api/auditoria/paciente/";*/
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
@@ -23,8 +29,9 @@ class ReportPantientDialog extends Component {
     this.state = {
       Id: 0,
       report: "Termino",
-      name: "David Xavier Diaz EXP-VD-",
-      juzgado: "Juzgado de Ejecución Contra la Violencia Domestica",
+      name: "David Xavier Diaz Guzman",
+      expediente: "9980",
+      juzgado: "Juzgado Especial de Violencia Domestica",
       date: "2 de Marzo de dos mil veinte",
       encargado: "Lic. Miriam Fonseca",
       code: "Psicóloga 07-953"
@@ -44,45 +51,19 @@ class ReportPantientDialog extends Component {
     this.props.handleClose();
   };
 
-  styles = theme => ({
-    root: {
-      margin: 0,
-      padding: theme.spacing(2)
-    },
-    closeButton: {
-      position: "absolute",
-      right: theme.spacing(1),
-      top: theme.spacing(1),
-      color: theme.palette.grey[500]
-    }
-  });
-
-  useStyles = makeStyles(theme => ({
-    root: {
-      "& > *": {
-        margin: theme.spacing(1),
-        width: 400
-      }
-    }
-  }));
-
   componentDidMount = e => {
     let id = this.props.vals.selectedRow[0].id_paciente;
     let isAbandon = this.props.vals.isAbandon;
     this.setState({
-      juzgado: "Juzgado de Ejecución Contra la Violencia Domestica ",
-      date: "2 de Marzo de dos mil veinte",
-      name: "David Xavier Diaz EXP-VD-",
+      juzgado: "Juzgado Especial de Violencia Domestica",
+      date: "6 de Marzo de dos mil veinte.",
+      name: "David Xavier Diaz",
+      expediente: "9980",
       encargado: "Lic. Miriam Fonseca",
       code: "Psicóloga 07-953"
     });
-    let reporte = "Termino";
-    if (isAbandon) {
-      reporte = "Abandono";
-    }
+    let reporte = isAbandon ? "Abandono" : "Termino";
     this.setState({ report: reporte });
-    console.log(isAbandon);
-    console.log(id);
     /*Axios.get(port + `${id}`)
       .then(res => this.setState({ historial: res.data }))
       .catch(err => console.log(err));
@@ -92,37 +73,48 @@ class ReportPantientDialog extends Component {
       .catch(err => console.log(err));*/
   };
 
+  getDataToPDF = async data => {
+    let img = await html2canvas(document.querySelector(data)).then(
+      async canvas => {
+        document.body.appendChild(canvas);
+        let img = await canvas.toDataURL("image/png");
+        return img;
+      }
+    );
+    return img;
+  };
+
+  printPDF = async () => {
+    let imgLogo = await this.getDataToPDF("#logo");
+    let imgBody = await this.getDataToPDF("#pdf");
+    let docPDF = new jsPDF();
+    docPDF.addImage(imgLogo, "JPEG", 20, 20);
+    docPDF.addImage(imgBody, "JPEG", 20, 120);
+    //Print PDF
+    docPDF.autoPrint();
+    docPDF.output("dataurlnewwindow");
+  };
+
   render() {
     const { vals } = this.props;
-    console.log(this.state);
-    let doc = new jsPDF();
-    doc.text("Pastoral Social Caritas de Honduras", 10, 10);
-    doc.text(this.state.juzgado, 10, 20);
-    doc.text(
-      "Pastoral Social Caritas Diócesis de San Pedro Sula, notifica que el Sr. (a): \n" +
-        this.state.name +
-        " " +
-        this.state.report +
-        " el esquema de Consejería,\nal que fue remitido por el Juzgado Especial de Violencia Domestica.",
-      10,
-      30
-    );
-    doc.text(
-      "Se extiende la presente constancia en la ciudad de San Pedro Sula,\ndepartamento de Cortes el " +
-        this.state.date +
-        ".",
-      10,
-      70
-    );
-    doc.text(this.state.encargado, 10, 90);
-    doc.text(this.state.code, 10, 100);
-    doc.save("test.pdf");
+    let bodyReport1 =
+      "Pastoral Social Caritas Diócesis de San Pedro Sula, notifica que el Sr. (a): " +
+      this.state.name +
+      " " +
+      this.state.expediente +
+      " " +
+      this.state.report +
+      " el esquema de Consejería, al que fue remitido por el " +
+      this.state.juzgado +
+      ".";
+    let bodyReport2 =
+      "Se extiende la presente constancia en la ciudad de San Pedro Sula, departamento de Cortes el " +
+      this.state.date;
 
     return (
       <div>
         <Dialog
-          maxWidth="100px"
-          fullWidth="100px"
+          fullScreen
           open={vals.openReport}
           onClose={this.CloseDialog}
           TransitionComponent={Transition}
@@ -142,10 +134,64 @@ class ReportPantientDialog extends Component {
                 style={{ marginLeft: "2em", flex: 1 }}
                 color="inherit"
               >
-                Reporte
+                <Row>
+                  <Col xs={12} md={8}>
+                    Reporte de {this.state.report}
+                  </Col>
+                  <Col xs={6} md={4}>
+                    <Container>
+                      <Button
+                        variant="contained"
+                        onClick={this.printPDF}
+                        startIcon={<PrintIcon />}
+                        color="default"
+                      >
+                        Imprimir
+                      </Button>
+                    </Container>
+                  </Col>
+                </Row>
               </Typography>
             </Toolbar>
           </AppBar>
+          <br></br>
+          <br></br>
+          <br></br>
+          <Row>
+            <span className="center-spacer"></span>
+
+            <img id="logo" src={logo} alt="Logo"></img>
+
+            <span className="center-spacer"></span>
+          </Row>
+          <Row>
+            <span className="center-spacer"></span>
+            <div id="pdf" style={{ width: "17.59cm" }}>
+              <p>
+                {this.state.juzgado ===
+                "Juzgado Especial de Violencia Domestica"
+                  ? "Juzgado de Ejecución Contra la Violencia Domestica"
+                  : this.state.juzgado}
+              </p>
+              <p>Ciudad.</p>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+
+              <p>{bodyReport1}</p>
+              <p>{bodyReport2}</p>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <br></br>
+              <p>{this.state.encargado}</p>
+              <p>{this.state.code}</p>
+            </div>
+
+            <span className="center-spacer"></span>
+          </Row>
         </Dialog>
       </div>
     );
