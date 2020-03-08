@@ -28,13 +28,7 @@ class ReportPantientDialog extends Component {
     this.state = {
       Id: 0,
       reporte: {},
-      report: "Termino",
-      name: "David Xavier Diaz Guzman",
-      expediente: "9980",
-      juzgado: "Juzgado Especial de Violencia Domestica",
-      date: "2 de Marzo de dos mil veinte",
-      encargado: "Lic. Miriam Fonseca",
-      code: "Psicóloga 07-953"
+      report: "Termino"
     };
   }
 
