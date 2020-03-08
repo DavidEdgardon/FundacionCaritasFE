@@ -7,7 +7,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
 import Slide from "@material-ui/core/Slide";
-//import Axios from "axios";
+import Axios from "axios";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import Button from "@material-ui/core/Button";
@@ -16,9 +16,8 @@ import { Row, Col, Container } from "react-bootstrap";
 import "../../styles/dialogReport.css";
 import logo from "../../assets/logocaritas.png";
 
-/*const url = "https://apicaritas.herokuapp.com/api/paciente/";
-const port = "http://localhost:3001/api/historial/";
-const portAuditoria = "http://localhost:3001/api/auditoria/paciente/";*/
+const url = "https://apicaritas.herokuapp.com/api/paciente/";
+const port = "http://localhost:3001/api/";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
@@ -28,6 +27,7 @@ class ReportPantientDialog extends Component {
     super(props);
     this.state = {
       Id: 0,
+      reporte: {},
       report: "Termino",
       name: "David Xavier Diaz Guzman",
       expediente: "9980",
@@ -54,23 +54,15 @@ class ReportPantientDialog extends Component {
   componentDidMount = e => {
     let id = this.props.vals.selectedRow[0].id_paciente;
     let isAbandon = this.props.vals.isAbandon;
-    this.setState({
-      juzgado: "Juzgado Especial de Violencia Domestica",
-      date: "6 de Marzo de dos mil veinte.",
-      name: "David Xavier Diaz",
-      expediente: "9980",
-      encargado: "Lic. Miriam Fonseca",
-      code: "Psicóloga 07-953"
-    });
     let reporte = isAbandon ? "Abandono" : "Termino";
     this.setState({ report: reporte });
-    /*Axios.get(port + `${id}`)
-      .then(res => this.setState({ historial: res.data }))
-      .catch(err => console.log(err));
+    this.getData(id);
+  };
 
-    Axios.get(portAuditoria + `${id}`)
-      .then(res => this.setState({ auditoria: res.data[0] }))
-      .catch(err => console.log(err));*/
+  getData = id => {
+    Axios.get(port + "reporte/" + `${id}`)
+      .then(res => this.setState({ reporte: res.data }))
+      .catch(err => console.log(err));
   };
 
   getDataToPDF = async data => {
@@ -99,17 +91,19 @@ class ReportPantientDialog extends Component {
     const { vals } = this.props;
     let bodyReport1 =
       "Pastoral Social Caritas Diócesis de San Pedro Sula, notifica que el Sr. (a): " +
-      this.state.name +
+      this.state.reporte.nombres +
       " " +
-      this.state.expediente +
+      this.state.reporte.apellidos +
+      " " +
+      this.state.reporte.numero_expediente +
       " " +
       this.state.report +
       " el esquema de Consejería, al que fue remitido por el " +
-      this.state.juzgado +
+      this.state.reporte.juez +
       ".";
     let bodyReport2 =
       "Se extiende la presente constancia en la ciudad de San Pedro Sula, departamento de Cortes el " +
-      this.state.date;
+      this.state.reporte.date;
 
     return (
       <div>
@@ -168,10 +162,10 @@ class ReportPantientDialog extends Component {
             <span className="center-spacer"></span>
             <div id="pdf" style={{ width: "17.59cm" }}>
               <p>
-                {this.state.juzgado ===
+                {this.state.reporte.juez ===
                 "Juzgado Especial de Violencia Domestica"
                   ? "Juzgado de Ejecución Contra la Violencia Domestica"
-                  : this.state.juzgado}
+                  : this.state.reporte.juez}
               </p>
               <p>Ciudad.</p>
               <br></br>
@@ -186,8 +180,8 @@ class ReportPantientDialog extends Component {
               <br></br>
               <br></br>
               <br></br>
-              <p>{this.state.encargado}</p>
-              <p>{this.state.code}</p>
+              <p>{"Lic. " + this.state.reporte.nombre}</p>
+              <p>{this.state.reporte.codigo}</p>
             </div>
 
             <span className="center-spacer"></span>
