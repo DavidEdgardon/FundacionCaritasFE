@@ -77,21 +77,8 @@ class HistorialPaciente extends Component {
     }
   }));
 
-  componentDidMount = e => {
-    let id = this.props.vals.selectedRow[0].id_paciente;
-
-    Axios.get(port + `${id}`)
-      .then(res => this.setState({ historial: res.data }))
-      .catch(err => console.log(err));
-
-    Axios.get(portAuditoria + `${id}`)
-      .then(res => this.setState({ auditoria: res.data[0] }))
-      .catch(err => console.log(err));
-  };
-
-  render() {
-    const { vals } = this.props;
-    const pagination = {
+  getPagination = () => {
+    return {
       pagination: {
         labelDisplayedRows: "{from}-{to} de {count}",
         labelRowsSelect: "filas",
@@ -114,22 +101,10 @@ class HistorialPaciente extends Component {
         searchPlaceholder: "Buscar"
       }
     };
+  };
 
-    const card_background = grey[200];
-
-    const tableIcons = {
-      DetailPanel: ChevronRight,
-      Filter: FilterList,
-      FirstPage: FirstPage,
-      Clear: Clear,
-      LastPage: LastPage,
-      NextPage: ChevronRight,
-      PreviousPage: ChevronLeft,
-      Search: Search,
-      SortArrow: ArrowUpward,
-      ViewColumn: ViewColumn
-    };
-    const columns = [
+  getColumns = () => {
+    return [
       {
         title: "Id Historial",
         field: "id_historial"
@@ -155,101 +130,152 @@ class HistorialPaciente extends Component {
         field: "comentario"
       }
     ];
+  };
 
-    return (
-      <div>
-        <Dialog
-          maxWidth="lg"
-          open={vals.open2}
-          onClose={this.CloseDialog}
-          TransitionComponent={Transition}
-        >
-          <AppBar style={{ position: "relative" }} color="secondary">
-            <Toolbar>
-              <IconButton
-                edge="start"
-                color="inherit"
-                onClick={this.CloseDialog}
-                aria-label="Close"
-              >
-                <CloseIcon />
-              </IconButton>
-              <Typography
-                variant="h6"
-                style={{ marginLeft: "2em", flex: 1 }}
-                color="inherit"
-              >
-                Historial de Paciente
-              </Typography>
-            </Toolbar>
-          </AppBar>
+  getTableIcons = () => {
+    return {
+      DetailPanel: ChevronRight,
+      Filter: FilterList,
+      FirstPage: FirstPage,
+      Clear: Clear,
+      LastPage: LastPage,
+      NextPage: ChevronRight,
+      PreviousPage: ChevronLeft,
+      Search: Search,
+      SortArrow: ArrowUpward,
+      ViewColumn: ViewColumn
+    };
+  };
 
-          <Grid
-            container
-            justify="flex-center"
-            style={{ width: "75%", alignSelf: "center", margin: "3%" }}
+  componentDidMount = e => {
+    let id = this.props.vals.selectedRow[0].id_paciente;
+
+    Axios.get(port + `${id}`)
+      .then(res => this.setState({ historial: res.data }))
+      .catch(err => console.log(err));
+
+    Axios.get(portAuditoria + `${id}`)
+      .then(res => this.setState({ auditoria: res.data[0] }))
+      .catch(err => console.log(err));
+  };
+
+  render() {
+    const { auditoria } = this.state;
+    const { vals } = this.props;
+    const pagination = this.getPagination();
+    const card_background = grey[200];
+    const tableIcons = this.getTableIcons();
+    const columns = this.getColumns();
+
+    if (auditoria.usuario_creacion) {
+      return (
+        <div>
+          <Dialog
+            maxWidth="lg"
+            open={vals.open2}
+            onClose={this.CloseDialog}
+            TransitionComponent={Transition}
           >
-            <Card style={{ backgroundColor: card_background }}>
-              <Card style={{ backgroundColor: card_background }}>
-                <div style={{ textAlign: "center" }}>
-                  <h3 style={{ textAlign: "center" }}>
-                    {" "}
-                    &nbsp;Auditoria Paciente{" "}
-                  </h3>
-                </div>
-                <CardContent>
-                  <Grid container spacing={4}>
-                    <Grid item xs={7} sm={3}>
-                      <TextField
-                        id="outlined-basic"
-                        label="Usuario"
-                        variant="outlined"
-                        value={this.state.auditoria.usuario_creacion}
-                      />
-                    </Grid>
-                    <Grid item xs={7} sm={3}>
-                      <TextField
-                        id="outlined-basic"
-                        label="Fecha Creacion"
-                        variant="outlined"
-                        value={this.state.auditoria.fecha_creacion}
-                      />
-                    </Grid>
-                    <Grid item xs={7} sm={3}>
-                      <TextField
-                        id="outlined-basic"
-                        label="Usuario Modifico"
-                        variant="outlined"
-                        value={this.state.auditoria.usuario_modifico}
-                      />
-                    </Grid>
-                    <Grid item xs={7} sm={3}>
-                      <TextField
-                        id="outlined-basic"
-                        label="Fecha Ultima Actualizacion"
-                        variant="outlined"
-                        value={this.state.auditoria.fehca_modificacion}
-                      />
-                    </Grid>
+            <AppBar style={{ position: "relative" }} color="secondary">
+              <Toolbar>
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={this.CloseDialog}
+                  aria-label="Close"
+                >
+                  <CloseIcon />
+                </IconButton>
+                <Typography
+                  variant="h6"
+                  style={{ marginLeft: "2em", flex: 1 }}
+                  color="inherit"
+                >
+                  Historial de Paciente
+                </Typography>
+              </Toolbar>
+            </AppBar>
 
-                    <Grid item xs={7} sm={12}>
-                      <MaterialTable
-                        icons={tableIcons}
-                        title="Historial"
-                        columns={columns}
-                        data={this.state.historial}
-                        isLoading={this.state.isLoading}
-                        localization={pagination}
-                      />
+            <Grid
+              container
+              justify="flex-center"
+              style={{ width: "75%", alignSelf: "center", margin: "3%" }}
+            >
+              <Card style={{ backgroundColor: card_background }}>
+                <Card style={{ backgroundColor: card_background }}>
+                  <div style={{ textAlign: "center" }}>
+                    <h3 style={{ textAlign: "center" }}>
+                      {" "}
+                      &nbsp;Auditoria Paciente{" "}
+                    </h3>
+                  </div>
+                  <CardContent>
+                    <Grid container spacing={4}>
+                      <Grid item xs={7} sm={3}>
+                        <TextField
+                          id="user"
+                          label="Usuario"
+                          variant="outlined"
+                          InputProps={{
+                            readOnly: true
+                          }}
+                          defaultValue={auditoria.usuario_creacion}
+                        />
+                      </Grid>
+                      <Grid item xs={7} sm={3}>
+                        <TextField
+                          id="date"
+                          label="Fecha Creacion"
+                          variant="outlined"
+                          defaultValue={auditoria.fecha_creacion}
+                          InputProps={{
+                            readOnly: true
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={7} sm={3}>
+                        <TextField
+                          id="userMod"
+                          label="Usuario Modifico"
+                          variant="outlined"
+                          value={auditoria.usuario_modifico}
+                          InputProps={{
+                            readOnly: true
+                          }}
+                        />
+                      </Grid>
+                      <Grid item xs={7} sm={3}>
+                        <TextField
+                          id="dateMod"
+                          label="Fecha Ultima Actualizacion"
+                          variant="outlined"
+                          value={auditoria.fehca_modificacion}
+                          InputProps={{
+                            readOnly: true
+                          }}
+                        />
+                      </Grid>
+
+                      <Grid item xs={7} sm={12}>
+                        <MaterialTable
+                          icons={tableIcons}
+                          title="Historial"
+                          columns={columns}
+                          data={this.state.historial}
+                          isLoading={this.state.isLoading}
+                          localization={pagination}
+                        />
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </CardContent>
+                  </CardContent>
+                </Card>
               </Card>
-            </Card>
-          </Grid>
-        </Dialog>
-      </div>
-    );
+            </Grid>
+          </Dialog>
+        </div>
+      );
+    }
+    return <div>Cargando...</div>;
   }
 }
 
