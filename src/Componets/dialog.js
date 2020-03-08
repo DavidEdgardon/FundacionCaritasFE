@@ -127,8 +127,6 @@ class FullScreenDialog extends Component {
     this.setState({
       SegundoA: apellido.substring(pos, apellido.length)
     });
-    console.log(apellido.substring(0, pos));
-    console.log(apellido.substring(pos + 1, apellido.length));
   };
 
   getPosEspacioApellido = apellido => {
@@ -141,7 +139,6 @@ class FullScreenDialog extends Component {
   };
 
   componentDidMount = e => {
-    //this.setState({ Id: this.props.vals.selectedRow[0].Id });
     this.setState({ Nombre: this.props.vals.selectedRow[0].nombre });
     let apellido = this.props.vals.selectedRow[0].apellido;
     this.getApellidos(String(apellido));
@@ -152,14 +149,6 @@ class FullScreenDialog extends Component {
     this.setState({ Tabajo: this.props.vals.selectedRow[0].trabajo });
     this.setState({ Educacion: this.props.vals.selectedRow[0].educacion });
     this.setState({ Estado: this.props.vals.selectedRow[0].estado_civil }); //*/
-    console.log(this.props.vals.selectedRow[0].id_paciente);
-    /*fetch('https://apicaritas.herokuapp.com/api/paciente/personal/'+this.props.vals.selectedRow[0].Id)
-    .then(res => res.json()).then(data =>
-       this.setState({extraData: data}))
-    .catch(function (error) {
-          console.log(error);
-    })*/
-    console.log("open");
   };
 
   render() {

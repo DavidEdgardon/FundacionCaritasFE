@@ -23,7 +23,6 @@ import Search from "@material-ui/icons/Search";
 import Clear from "@material-ui/icons/Clear";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import ArrowUpward from "@material-ui/icons/ArrowUpward";
-import { METHODS } from "http";
 import Axios from "axios";
 
 const url = "https://apicaritas.herokuapp.com/api/paciente/";
@@ -80,7 +79,7 @@ class HistorialPaciente extends Component {
 
   componentDidMount = e => {
     let id = this.props.vals.selectedRow[0].id_paciente;
-    console.log(id);
+
     Axios.get(port + `${id}`)
       .then(res => this.setState({ historial: res.data }))
       .catch(err => console.log(err));
@@ -92,7 +91,6 @@ class HistorialPaciente extends Component {
 
   render() {
     const { vals } = this.props;
-    console.log(this.state);
     const pagination = {
       pagination: {
         labelDisplayedRows: "{from}-{to} de {count}",
@@ -165,8 +163,7 @@ class HistorialPaciente extends Component {
     return (
       <div>
         <Dialog
-          maxWidth="100px"
-          fullWidth="100px"
+          maxWidth="lg"
           open={vals.open2}
           onClose={this.CloseDialog}
           TransitionComponent={Transition}

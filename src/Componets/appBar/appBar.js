@@ -10,7 +10,6 @@ import Box from '@material-ui/core/Box';
 class appBar extends Component {
   render() {
     const { values, rol } = this.props;
-    console.log("rol appbar: ", rol);
     if (rol === "Administrador") {
       return (
         <div>
