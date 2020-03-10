@@ -16,10 +16,13 @@ import Info from "@material-ui/icons/Info";
 import CheckCircle from "@material-ui/icons/CheckCircle";
 import Cancel from "@material-ui/icons/Cancel";
 import Edit from "@material-ui/icons/Edit";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Tooltip from "@material-ui/core/Tooltip";
 import MaterialTable from "material-table";
 import Grid from "@material-ui/core/Grid";
 import ReportPantientDialog from "./ReportPantientDialog";
+import CasoDetailDialog from "./CasoDetailDialog";
 
 const port = "http://localhost:3001/";
 
@@ -46,8 +49,8 @@ class Pacients extends Component {
       open: false,
       open2: false,
       openReport: false,
+      openViewCaso: false,
       isAbandon: false,
-      hide: false,
       isLoading: false
     };
   }
@@ -72,32 +75,35 @@ class Pacients extends Component {
   };
 
   handleClickOpen = () => {
-    this.setState({ open: true, hide: true });
-    //this.setState({ hide: true });
-    //no hagas esto es mala pracica codigo innecesario
+    this.setState({ open: true });
   };
 
   handleClickOpen2 = () => {
-    this.setState({ open2: true, hide: true });
-    //this.setState({ hide: true });
+    this.setState({ open2: true });
   };
 
   handleClickOpenReport = () => {
-    this.setState({ openReport: true, hide: true });
+    this.setState({ openReport: true });
+  };
+
+  handleClickOpenDialogViewCaso = () => {
+    this.setState({ openViewCaso: true });
   };
 
   handleClose = () => {
-    this.setState({ open: false, hide: false });
-    //this.setState({ hide: false });
+    this.setState({ open: false });
   };
 
   handleClose2 = () => {
-    this.setState({ open2: false, hide: false });
-    //this.setState({ hide: false });
+    this.setState({ open2: false });
   };
 
   handleCloseReport = () => {
-    this.setState({ openReport: false, hide: false });
+    this.setState({ openReport: false });
+  };
+
+  handleCloseDialogViewCaso = () => {
+    this.setState({ openViewCaso: false });
     //this.setState({ hide: false });
   };
 
@@ -114,6 +120,11 @@ class Pacients extends Component {
   goToReport = (selectedRow, isAbandon) => {
     this.setState({ selectedRow: [selectedRow.rowData], isAbandon: isAbandon });
     this.handleClickOpenReport();
+  };
+
+  goToViewCaso = selectedRow => {
+    this.setState({ selectedRow: [selectedRow.rowData] });
+    this.handleClickOpenDialogViewCaso();
   };
 
   render() {
@@ -143,47 +154,40 @@ class Pacients extends Component {
       }
     };
 
+    const options = {
+      resizableColumns: "true"
+    };
+
     const columns = [
       {
         field: "acciones",
         title: "Acciones",
         render: rowData => (
-          <div>
-            <Grid container spacing={3}>
-              <Grid item xs={3}>
-                <Tooltip title="Información">
-                  <IconButton onClick={() => this.goToAuditoria({ rowData })}>
-                    <Info color="secondary"></Info>
-                  </IconButton>
-                </Tooltip>
-              </Grid>
-              <Grid item xs={3}>
-                <Tooltip title="Editar">
-                  <IconButton onClick={() => this.datas({ rowData })}>
-                    <Edit color="secondary"></Edit>
-                  </IconButton>
-                </Tooltip>
-              </Grid>
-              <Grid item xs={3}>
-                <Tooltip title="Abandono">
-                  <IconButton
-                    onClick={() => this.goToReport({ rowData }, true)}
-                  >
-                    <Cancel color="secondary"></Cancel>
-                  </IconButton>
-                </Tooltip>
-              </Grid>
-              <Grid item xs={3}>
-                <Tooltip title="Terminado">
-                  <IconButton
-                    onClick={() => this.goToReport({ rowData }, false)}
-                  >
-                    <CheckCircle color="secondary"></CheckCircle>
-                  </IconButton>
-                </Tooltip>
-              </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={3}>
+              <Tooltip title="Información">
+                <IconButton onClick={() => this.goToAuditoria({ rowData })}>
+                  <Info color="secondary"></Info>
+                </IconButton>
+              </Tooltip>
             </Grid>
-          </div>
+            <Grid item xs={3}>
+              <Tooltip title="Editar">
+                <IconButton onClick={() => this.datas({ rowData })}>
+                  <Edit color="secondary"></Edit>
+                </IconButton>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={3}>
+              <Tooltip title="Ver Caso">
+                <IconButton
+                  onClick={() => this.goToViewCaso({ rowData }, true)}
+                >
+                  <VisibilityIcon color="secondary"></VisibilityIcon>
+                </IconButton>
+              </Tooltip>
+            </Grid>
+          </Grid>
         )
       },
       {
@@ -221,6 +225,34 @@ class Pacients extends Component {
       {
         title: "Educacion",
         field: "educacion"
+      },
+      {
+        field: "reportes",
+        title: "Reportes",
+        render: rowData => (
+          <div>
+            <Grid container spacing={3}>
+              <Grid item xs={3}>
+                <Tooltip title="Abandono">
+                  <IconButton
+                    onClick={() => this.goToReport({ rowData }, true)}
+                  >
+                    <Cancel color="secondary"></Cancel>
+                  </IconButton>
+                </Tooltip>
+              </Grid>
+              <Grid item xs={3}>
+                <Tooltip title="Terminado">
+                  <IconButton
+                    onClick={() => this.goToReport({ rowData }, false)}
+                  >
+                    <CheckCircle color="secondary"></CheckCircle>
+                  </IconButton>
+                </Tooltip>
+              </Grid>
+            </Grid>
+          </div>
+        )
       }
     ];
 
@@ -234,6 +266,7 @@ class Pacients extends Component {
             data={this.state.list}
             isLoading={this.state.isLoading}
             localization={pagination}
+            options={options}
           />
         </div>
 
@@ -261,6 +294,16 @@ class Pacients extends Component {
           <ReportPantientDialog
             handleClickOpen={this.handleClickOpenReport}
             handleClose={this.handleCloseReport}
+            vals={this.state}
+          />
+        ) : (
+          <div></div>
+        )}
+
+        {this.state.openViewCaso ? (
+          <CasoDetailDialog
+            handleClickOpen={this.handleClickOpenDialogViewCaso}
+            handleClose={this.handleCloseDialogViewCaso}
             vals={this.state}
           />
         ) : (
