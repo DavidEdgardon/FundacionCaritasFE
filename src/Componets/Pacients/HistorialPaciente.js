@@ -155,11 +155,17 @@ class HistorialPaciente extends Component {
     let id = this.props.vals.selectedRow[0].id_paciente;
 
     Axios.get(port + `${id}`)
-      .then(res => this.setState({ historial: res.data }))
+      .then(res => {
+        this.setState({ historial: res.data });
+        console.log(res.data);
+      })
       .catch(err => console.log(err));
 
     Axios.get(portAuditoria + `${id}`)
-      .then(res => this.setState({ auditoria: res.data[0] }))
+      .then(res => {
+        this.setState({ auditoria: res.data[0] });
+        console.log(res);
+      })
       .catch(err => console.log(err));
   };
 
