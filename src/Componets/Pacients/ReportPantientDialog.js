@@ -99,7 +99,8 @@ class ReportPantientDialog extends Component {
   getBodyReport2 = () => {
     return (
       "Se extiende la presente constancia en la ciudad de San Pedro Sula, departamento de Cortes el " +
-      this.state.reporte.date
+      this.state.reporte.date +
+      "."
     );
   };
 
