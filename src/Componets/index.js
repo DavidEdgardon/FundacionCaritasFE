@@ -16,8 +16,6 @@ export default class index extends Component {
         case 2:
           return <Pacients />;
         case 3:
-          return <Cases />;
-        case 4:
           return <ConfigTab />;
         default:
           return <Forms />;
