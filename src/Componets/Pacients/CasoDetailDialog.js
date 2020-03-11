@@ -17,107 +17,92 @@ import Clear from "@material-ui/icons/Clear";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import ArrowUpward from "@material-ui/icons/ArrowUpward";
 import MaterialTable from "material-table";
+import Select from "@material-ui/core/Select";
+import NativeSelect from "@material-ui/core/NativeSelect";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import { Alert, AlertTitle } from "@material-ui/lab";
 import "../../styles/dialogReport.css";
 
 const url = "https://apicaritas.herokuapp.com/api/paciente/";
-const port = "http://localhost:3001/api/caso/detail/";
+const port = "http://localhost:3001/api/caso/";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
-
-const tableIcons = {
-  DetailPanel: ChevronRight,
-  Filter: FilterList,
-  FirstPage: FirstPage,
-  Clear: Clear,
-  LastPage: LastPage,
-  NextPage: ChevronRight,
-  PreviousPage: ChevronLeft,
-  Search: Search,
-  SortArrow: ArrowUpward,
-  ViewColumn: ViewColumn
-};
-
-const columns = [
-  {
-    title: "ID Caso",
-    field: "id_caso",
-    cellStyle: {
-      width: "100%",
-      maxWidth: "100%",
-      padding: "none"
-    }
-  },
-  {
-    title: "Paciente",
-    field: "nombre",
-    cellStyle: {
-      width: "100%",
-      maxWidth: "100%",
-      padding: "none"
-    }
-    // headerStyle: {
-    // //   width: 700,
-    // //   maxWidth: 700,
-    // //   padding: 'none'
-    // // }
-  },
-  {
-    title: "Condición",
-    field: "condicion"
-  },
-  {
-    title: "Terapeuta",
-    field: "terapeuta"
-  },
-  {
-    title: "Causa",
-    field: "causa"
-  },
-  {
-    title: "Recursos Municipales",
-    field: "recursos"
-  },
-  {
-    title: "Juez",
-    field: "juez"
-  },
-  {
-    title: "Municipio",
-    field: "municipio"
-  },
-  {
-    title: "Estado Atencion",
-    field: "estado_atencion"
-  },
-  {
-    title: "Ubicacion Violencia",
-    field: "ubicacion_violencia"
-  },
-  {
-    title: "Tratamiento",
-    field: "tratamiento"
-  },
-  {
-    title: "Ultima modificacion",
-    field: "ultima_modificacion"
-  }
-];
-const options = {
-  resizableColumns: "true"
-};
 
 class CasoDetailDialog extends Component {
   constructor(props) {
     super(props);
     this.state = {
       Id: 0,
-      casoData: []
+      casoData: [],
+      open: false,
+      isError: false
     };
   }
 
-  handleChange = (event, input) => {
-    this.setState({ [input]: event.target.value });
+  handleChange = (name, selectedRow) => event => {
+    selectedRow[name] = event.target.value;
+    this.changeDataCaso(selectedRow);
+  };
+
+  changeDataCaso = async selectedRow => {
+    let response = await this.updateEstadoAtencionInDataBase(
+      selectedRow.estado_atencion,
+      selectedRow.id_caso
+    );
+    if (response === "Ok") {
+      //Se actulizo el estado de aceptacion en el backend entonces hay que actualizar en el frontend
+      let pos = this.getPosDataCaso(selectedRow.id_caso);
+      let newArray = this.state.casoData;
+      newArray[pos] = selectedRow;
+      this.setState({ casoData: newArray });
+    }
+    this.showDialogAlert(!response === "okay");
+  };
+
+  showDialogAlert = isError => {
+    this.setState({ isError: isError });
+    this.openAlertDialog();
+    setTimeout(() => {
+      this.closeAlertDialog();
+    }, 3000);
+  };
+
+  updateEstadoAtencionInDataBase = async (newEstado, idCaso) => {
+    let estado = this.getIdEstadoAtencion(newEstado);
+    let result = await Axios.put(port + "update/" + `${idCaso}`, { EA: estado })
+      .then(response => {
+        return response.data;
+      })
+      .catch(error => console.log(error));
+    return result;
+  };
+
+  getIdEstadoAtencion = estado => {
+    if (estado === "Proceso") return 1;
+    else if (estado === "Espera") return 2;
+    return 3;
+  };
+
+  getPosDataCaso = id_caso => {
+    let pos = 0;
+    this.state.casoData.forEach(e => {
+      if (e.id_caso === id_caso) {
+        return;
+      }
+      pos++;
+    });
+    return pos;
+  };
+
+  openAlertDialog = () => {
+    this.setState({ open: true });
+  };
+
+  closeAlertDialog = () => {
+    this.setState({ open: false });
   };
 
   openDialog = e => {
@@ -135,7 +120,7 @@ class CasoDetailDialog extends Component {
   };
 
   getData = id => {
-    Axios.get(port + `${id}`)
+    Axios.get(port + "detail/" + `${id}`)
       .then(res => {
         this.setState({ casoData: res.data });
         console.log(this.state.casoData);
@@ -143,19 +128,103 @@ class CasoDetailDialog extends Component {
       .catch(err => console.log(err));
   };
 
-  spacer = n => {
-    let array = [];
-    for (let c = 0; c < n; c++) {
-      array.push(c);
-    }
-    let result = array.map(d => {
-      return <br key={d} />;
-    });
-    return result;
+  getTableIcons = () => {
+    return {
+      DetailPanel: ChevronRight,
+      Filter: FilterList,
+      FirstPage: FirstPage,
+      Clear: Clear,
+      LastPage: LastPage,
+      NextPage: ChevronRight,
+      PreviousPage: ChevronLeft,
+      Search: Search,
+      SortArrow: ArrowUpward,
+      ViewColumn: ViewColumn
+    };
+  };
+
+  getTableColumns = () => {
+    return [
+      {
+        title: "ID Caso",
+        field: "id_caso",
+        cellStyle: {
+          width: "100%",
+          maxWidth: "100%",
+          padding: "none"
+        }
+      },
+      {
+        title: "Paciente",
+        field: "nombre",
+        cellStyle: {
+          width: "100%",
+          maxWidth: "100%",
+          padding: "none"
+        }
+      },
+      {
+        title: "Condición",
+        field: "condicion"
+      },
+      {
+        title: "Terapeuta",
+        field: "terapeuta"
+      },
+      {
+        title: "Causa",
+        field: "causa"
+      },
+      {
+        title: "Recursos Municipales",
+        field: "recursos"
+      },
+      {
+        title: "Juez",
+        field: "juez"
+      },
+      {
+        title: "Municipio",
+        field: "municipio"
+      },
+      {
+        title: "Estado Atencion",
+        field: "estado_atencion",
+        render: rowData => (
+          <NativeSelect
+            value={rowData.estado_atencion}
+            onChange={this.handleChange("estado_atencion", rowData)}
+            name="estado_atencion"
+            inputProps={{ "aria-label": "estado_atencion" }}
+          >
+            <option value="Espera">Espera</option>
+            <option value="Proceso">Proceso</option>
+            <option value="Abandono">Abandono</option>
+          </NativeSelect>
+        )
+      },
+      {
+        title: "Ubicacion Violencia",
+        field: "ubicacion_violencia"
+      },
+      {
+        title: "Tratamiento",
+        field: "tratamiento"
+      },
+      {
+        title: "Ultima modificacion",
+        field: "ultima_modificacion"
+      }
+    ];
   };
 
   render() {
     const { vals } = this.props;
+    const tableIcons = this.getTableIcons();
+    const columns = this.getTableColumns();
+    const options = {
+      resizableColumns: "true"
+    };
 
     return (
       <div>
@@ -218,6 +287,27 @@ class CasoDetailDialog extends Component {
             />
           </div>
         </Dialog>
+
+        {this.state.open && (
+          <Dialog
+            open={this.state.open}
+            onClose={this.closeAlertDialog}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            {this.state.isError ? (
+              <Alert severity="error">
+                <AlertTitle>Operación fallida</AlertTitle>
+                Intente más tarde.
+              </Alert>
+            ) : (
+              <Alert severity="success" style={{ width: "100%" }}>
+                <AlertTitle>Operación existosa</AlertTitle>
+                Estado de atención actualizado correctamente.
+              </Alert>
+            )}
+          </Dialog>
+        )}
       </div>
     );
   }
