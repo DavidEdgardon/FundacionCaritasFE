@@ -6,6 +6,7 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Button from "@material-ui/core/Button";
 import "../../styles/dialogReport.css";
+import Box from "@material-ui/core/Box";
 
 class appBar extends Component {
   render() {
@@ -27,10 +28,17 @@ class appBar extends Component {
                 <Tab id="Pacientes" label="Pacientes" />
                 <Tab id="Config" label="Configuracion" />
               </Tabs>
-
-              <Button color="inherit" onClick={this.props.logout}>
-                Cerrar Sesión
-              </Button>
+              <Box
+                p={1}
+                position="absolute"
+                top={0}
+                left="85%"
+                zIndex="tooltip"
+              >
+                <Button color="inherit" onClick={this.props.logout}>
+                  Cerrar Sesión
+                </Button>
+              </Box>
             </Toolbar>
           </AppBar>
         </div>

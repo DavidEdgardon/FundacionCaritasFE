@@ -110,16 +110,20 @@ class HistorialPaciente extends Component {
         field: "id_historial"
       },
       {
-        title: "Id Paciente",
-        field: "id_paciente"
+        title: "Numero Expediente",
+        field: "num_expediente"
       },
       {
-        title: "Id Usuario",
-        field: "id_usuario"
+        title: "Nombre",
+        field: "nombre"
       },
       {
-        title: "Tipo Reporte",
-        field: "tipo_reporte"
+        title: "Apellido",
+        field: "apellido"
+      },
+      {
+        title: "Tipo Constancia",
+        field: "tipo_constancia"
       },
       {
         title: "Fecha",
