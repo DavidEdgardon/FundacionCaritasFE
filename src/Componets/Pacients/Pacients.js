@@ -165,14 +165,14 @@ class Pacients extends Component {
         render: rowData => (
           <Grid container spacing={3}>
             <Grid item xs={3}>
-              <Tooltip title="Información">
+              <Tooltip title="Auditoria de Paciente">
                 <IconButton onClick={() => this.goToAuditoria({ rowData })}>
                   <Info color="secondary"></Info>
                 </IconButton>
               </Tooltip>
             </Grid>
             <Grid item xs={3}>
-              <Tooltip title="Editar">
+              <Tooltip title="Editar Paciente">
                 <IconButton onClick={() => this.datas({ rowData })}>
                   <Edit color="secondary"></Edit>
                 </IconButton>
@@ -228,7 +228,7 @@ class Pacients extends Component {
       },
       {
         field: "reportes",
-        title: "Reportes",
+        title: "Constancias",
         render: rowData => (
           <div>
             <Grid container spacing={3}>
