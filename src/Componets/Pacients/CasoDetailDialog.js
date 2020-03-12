@@ -23,6 +23,7 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
 import "../../styles/dialogReport.css";
 
 const url = "https://apicaritas.herokuapp.com/api/paciente/";
@@ -140,7 +141,6 @@ class CasoDetailDialog extends Component {
     await Axios.get(port + "recursosmunicipales")
       .then(res => {
         this.setState({ recursosMunicipales: res.data });
-        console.log(res.data);
       })
       .catch(err => console.log(err));
   };
@@ -149,7 +149,6 @@ class CasoDetailDialog extends Component {
     await Axios.get(port + "causaviolencia")
       .then(res => {
         this.setState({ causasViolencia: res.data });
-        console.log(res.data);
       })
       .catch(err => console.log(err));
   };
@@ -158,7 +157,6 @@ class CasoDetailDialog extends Component {
     await Axios.get(port + "tipoviolencia")
       .then(res => {
         this.setState({ tipoViolencia: res.data });
-        console.log(res.data);
       })
       .catch(err => console.log(err));
   };
