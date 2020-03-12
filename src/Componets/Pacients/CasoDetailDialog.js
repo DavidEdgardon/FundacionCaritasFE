@@ -17,16 +17,16 @@ import Clear from "@material-ui/icons/Clear";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import ArrowUpward from "@material-ui/icons/ArrowUpward";
 import MaterialTable from "material-table";
-import Select from "@material-ui/core/Select";
 import NativeSelect from "@material-ui/core/NativeSelect";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
 import { Alert, AlertTitle } from "@material-ui/lab";
+import ExpansionPanel from "@material-ui/core/ExpansionPanel";
+import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
+import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import "../../styles/dialogReport.css";
 
 const url = "https://apicaritas.herokuapp.com/api/paciente/";
-const port = "http://localhost:3001/api/caso/";
+const port = "http://localhost:3001/api/";
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
@@ -38,7 +38,8 @@ class CasoDetailDialog extends Component {
       Id: 0,
       casoData: [],
       open: false,
-      isError: false
+      isError: false,
+      recursosMunicipales: []
     };
   }
 
@@ -72,7 +73,9 @@ class CasoDetailDialog extends Component {
 
   updateEstadoAtencionInDataBase = async (newEstado, idCaso) => {
     let estado = this.getIdEstadoAtencion(newEstado);
-    let result = await Axios.put(port + "update/" + `${idCaso}`, { EA: estado })
+    let result = await Axios.put(port + "caso/update/" + `${idCaso}`, {
+      EA: estado
+    })
       .then(response => {
         return response.data;
       })
@@ -114,16 +117,27 @@ class CasoDetailDialog extends Component {
     this.props.handleClose();
   };
 
-  componentDidMount = e => {
+  componentDidMount = async e => {
     let id = this.props.vals.selectedRow[0].id_paciente;
+    await this.getRecursosMunicipales();
     this.getData(id);
   };
 
   getData = id => {
-    Axios.get(port + "detail/" + `${id}`)
+    Axios.get(port + "caso/detail/" + `${id}`)
       .then(res => {
         this.setState({ casoData: res.data });
         console.log(this.state.casoData);
+      })
+      .catch(err => console.log(err));
+  };
+
+  getRecursosMunicipales = async () => {
+    await Axios.get(port + "recursosmunicipales")
+      .then(res => {
+        this.setState({ recursosMunicipales: res.data });
+        console.log(this.state.recursosMunicipales);
+        console.log(res.data);
       })
       .catch(err => console.log(err));
   };
@@ -173,11 +187,90 @@ class CasoDetailDialog extends Component {
       },
       {
         title: "Causa",
-        field: "causa"
+        field: "causas",
+        render: rowData => {
+          let json = JSON.parse(rowData.causas);
+          let array = new Array();
+          for (let clave in json) {
+            if (json.hasOwnProperty(clave)) {
+              array.push(json[clave]);
+            }
+          }
+          let list = array.map(e => {
+            return <li key={e}>{e}</li>;
+          });
+          return (
+            <ExpansionPanel>
+              <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panelRecursos-content"
+              >
+                <Typography>Ver más</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <Typography>{list}</Typography>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          );
+        }
       },
       {
         title: "Recursos Municipales",
-        field: "recursos"
+        field: "recursos_muni",
+        render: rowData => {
+          let json = JSON.parse(rowData.recursos_muni);
+          let array = new Array();
+          for (let clave in json) {
+            if (json.hasOwnProperty(clave)) {
+              array.push(this.state.recursosMunicipales[json[clave] - 1].tipo);
+            }
+          }
+          let list = array.map(e => {
+            return <li key={e}>{e}</li>;
+          });
+          return (
+            <ExpansionPanel>
+              <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panelRecursos-content"
+              >
+                <Typography>Ver más</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <Typography>{list}</Typography>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          );
+        }
+      },
+      {
+        title: "Tipo violencia",
+        field: "tipo_violencia",
+        render: rowData => {
+          let json = JSON.parse(rowData.tipo_violencia);
+          let array = new Array();
+          for (let clave in json) {
+            if (json.hasOwnProperty(clave)) {
+              array.push(json[clave]);
+            }
+          }
+          let list = array.map(e => {
+            return <li key={e}>{e}</li>;
+          });
+          return (
+            <ExpansionPanel>
+              <ExpansionPanelSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panelRecursos-content"
+              >
+                <Typography>Ver más</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails>
+                <Typography>{list}</Typography>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          );
+        }
       },
       {
         title: "Juez",
