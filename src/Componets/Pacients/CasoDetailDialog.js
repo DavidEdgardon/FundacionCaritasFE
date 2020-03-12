@@ -39,7 +39,9 @@ class CasoDetailDialog extends Component {
       casoData: [],
       open: false,
       isError: false,
-      recursosMunicipales: []
+      recursosMunicipales: [],
+      causasViolencia: [],
+      tipoViolencia: []
     };
   }
 
@@ -120,6 +122,8 @@ class CasoDetailDialog extends Component {
   componentDidMount = async e => {
     let id = this.props.vals.selectedRow[0].id_paciente;
     await this.getRecursosMunicipales();
+    await this.getCausasViolencia();
+    await this.getTipoViolencia();
     this.getData(id);
   };
 
@@ -136,7 +140,24 @@ class CasoDetailDialog extends Component {
     await Axios.get(port + "recursosmunicipales")
       .then(res => {
         this.setState({ recursosMunicipales: res.data });
-        console.log(this.state.recursosMunicipales);
+        console.log(res.data);
+      })
+      .catch(err => console.log(err));
+  };
+
+  getCausasViolencia = async () => {
+    await Axios.get(port + "causaviolencia")
+      .then(res => {
+        this.setState({ causasViolencia: res.data });
+        console.log(res.data);
+      })
+      .catch(err => console.log(err));
+  };
+
+  getTipoViolencia = async () => {
+    await Axios.get(port + "tipoviolencia")
+      .then(res => {
+        this.setState({ tipoViolencia: res.data });
         console.log(res.data);
       })
       .catch(err => console.log(err));
@@ -193,7 +214,13 @@ class CasoDetailDialog extends Component {
           let array = new Array();
           for (let clave in json) {
             if (json.hasOwnProperty(clave)) {
-              array.push(json[clave]);
+              //Causas permite "otros" entonces pueda que algun momento no reciba un id valido para causasViolencia
+              let data = json[clave];
+              if (typeof data === "number") {
+                array.push(this.state.causasViolencia[data - 1].causa);
+              } else {
+                array.push(data);
+              }
             }
           }
           let list = array.map(e => {
@@ -251,7 +278,7 @@ class CasoDetailDialog extends Component {
           let array = new Array();
           for (let clave in json) {
             if (json.hasOwnProperty(clave)) {
-              array.push(json[clave]);
+              array.push(this.state.tipoViolencia[json[clave] - 1].tipo);
             }
           }
           let list = array.map(e => {
