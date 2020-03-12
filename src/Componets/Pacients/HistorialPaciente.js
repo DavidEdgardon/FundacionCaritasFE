@@ -259,7 +259,7 @@ class HistorialPaciente extends Component {
                           id="dateMod"
                           label="Fecha Ultima Actualizacion"
                           variant="outlined"
-                          value={auditoria.fehca_modificacion}
+                          value={auditoria.fecha_modificacion}
                           InputProps={{
                             readOnly: true
                           }}
