@@ -30,10 +30,12 @@ class App extends Component {
 
   handleUser = loggedUser => {
     this.setState({
+      token: loggedUser.token,
       user: loggedUser.usuario,
       password: loggedUser.contraseña,
       rol: loggedUser.rol
     });
+     localStorage.setItem('token', this.state.token)
   };
 
   logins() {

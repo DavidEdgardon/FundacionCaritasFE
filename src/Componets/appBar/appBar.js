@@ -56,10 +56,19 @@ class appBar extends Component {
               <Tabs value={values} onChange={this.props.handleChangeValue}>
                 <Tab label="Formulario" />
                 <Tab label="Estadisticas" />
+                <Tab id="Pacientes" label="Pacientes" />
               </Tabs>
-              <Button color="inherit" onClick={this.props.logout}>
-                Cerrar Sesión
-              </Button>
+              <Box
+                p={1}
+                position="absolute"
+                top={0}
+                left="85%"
+                zIndex="tooltip"
+              >
+                <Button color="inherit" onClick={this.props.logout}>
+                  Cerrar Sesión
+                </Button>
+              </Box>
             </Toolbar>
           </AppBar>
         </div>

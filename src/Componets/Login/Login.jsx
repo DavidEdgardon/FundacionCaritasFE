@@ -16,41 +16,47 @@ class FormDialog extends React.Component {
       super(props);
       this.state = {
         open: true,
-        email:'',
+        user:'',
         pass:'',
-        userData: [],
+        userData: {},
       };
   }
 
   componentDidMount = async () => {
-    await this.fetchData();
+    //localStorage.setItem('itemName', {})
+  //  await this.fetchData();
   }
 
   fetchData = async ()  =>{
-    await Axios.get(port + '/api/usuarios').then(res => {
+    await Axios.post(port + '/api/signin', {username:this.state.user,password:this.state.pass}).then(res => {
+     console.log(res.data)
       this.setState({ userData: res.data })
     }).catch(error =>{
       console.log(error);
     });
-
-    await Axios.get(port + '/api/roles').then(res => {
-      this.setState({ rolesData: res.data })
-    
-    }).catch(error =>{
-        console.log(error);
-    });
   }
 
-  login = () => {
-    if(this.evaluate()){
-      this.props.handelLogin(true)
-      this.props.handleUser(loggedUser);
-    }else{
-      this.props.handelLogin(false);
+
+
+  login = async () => {
+    await this.fetchData()
+    console.log(this.state.userData)
+    loggedUser = {
+      token: this.state.userData.token,
+      user: this.state.user,
+      password: this.state.pass,
+      rol: this.state.userData.rol
     }
+    this.props.handelLogin(true)
+    this.props.handleUser(loggedUser);
+   /* if(this.evaluate()){
+      
+     }else{
+      this.props.handelLogin(false);
+    }*/
   }
 
-  evaluate=()=>{
+ /* evaluate=()=>{
     try {
     var found = this.state.userData.map((item) => {
         if ( (this.state.email === item.usuario) && (this.state.pass === item.contraseña) ){
@@ -66,7 +72,7 @@ class FormDialog extends React.Component {
     } catch (e){
       console.log("Login Error: ", e);
     }
-  }
+  }*/
 
   handleChange = event => {
     this.setState({
@@ -88,11 +94,11 @@ class FormDialog extends React.Component {
               autoFocus
               margin="dense"
               id="name"
-              name="email"
+              name="user"
               onChange={this.handleChange}
-              type="email"
+              type="text"
               placeholder="Usuario"
-              value={this.state.email}
+              value={this.state.user}
               fullWidth
             />
              <TextField

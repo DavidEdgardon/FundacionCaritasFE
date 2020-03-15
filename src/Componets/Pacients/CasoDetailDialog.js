@@ -330,10 +330,6 @@ class CasoDetailDialog extends Component {
       {
         title: "Tratamiento",
         field: "tratamiento"
-      },
-      {
-        title: "Ultima modificacion",
-        field: "ultima_modificacion"
       }
     ];
   };

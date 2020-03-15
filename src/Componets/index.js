@@ -23,9 +23,11 @@ export default class index extends Component {
     } else {
       switch (values) {
         case 0:
-          return <Forms disabled={true} />;
+          return <Forms disabled={false} />;
         case 1:
           return <Stats />;
+        case 2:
+          return <Pacients />;
         default:
           return <Forms />;
       }
