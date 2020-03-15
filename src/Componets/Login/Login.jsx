@@ -49,30 +49,8 @@ class FormDialog extends React.Component {
     }
     this.props.handelLogin(true)
     this.props.handleUser(loggedUser);
-   /* if(this.evaluate()){
-      
-     }else{
-      this.props.handelLogin(false);
-    }*/
-  }
 
- /* evaluate=()=>{
-    try {
-    var found = this.state.userData.map((item) => {
-        if ( (this.state.email === item.usuario) && (this.state.pass === item.contraseña) ){
-          loggedUser = item;
-          return true;
-        }
-        return false;
-      })
-     
-      found = found[0] || found[1]; //found recibe un arreglo de 2 posiciones del map, si ambos son false no encontro nada, con uno de los dos que sea verdadero significa que encontro match 
-      console.log("valor de evaluate: ", found);
-      return found;
-    } catch (e){
-      console.log("Login Error: ", e);
-    }
-  }*/
+  }
 
   handleChange = event => {
     this.setState({

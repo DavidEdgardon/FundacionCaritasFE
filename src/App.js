@@ -4,7 +4,9 @@ import Appbar from "./Componets/appBar/appBar";
 import Index from "./Componets/index";
 import "./App.css";
 import Mayre from "mayre";
+import Axios from 'axios';
 import "bootstrap/dist/css/bootstrap.min.css";
+const port = 'http://localhost:3001';
 
 class App extends Component {
   constructor(props) {
@@ -36,6 +38,7 @@ class App extends Component {
       rol: loggedUser.rol
     });
      localStorage.setItem('token', this.state.token)
+     localStorage.setItem('rol', this.state.rol)
   };
 
   logins() {
@@ -48,10 +51,13 @@ class App extends Component {
     this.setState({ token: "" });
     localStorage.clear();
   };
+
   componentWillMount() {
-    this.setState({ token: localStorage.getItem("token") });
+    this.setState({ token: localStorage.getItem("token"), rol:localStorage.getItem("rol")});
   }
+
   render() {
+    if(this.state.rol != ''){
     return (
       <div>
         <Mayre
@@ -85,6 +91,11 @@ class App extends Component {
         />
       </div>
     );
+  }else{
+    return(<div>
+      cargando
+    </div>)
+  }
   }
 }
 
