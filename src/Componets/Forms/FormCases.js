@@ -12,6 +12,12 @@ import ListItem from '@material-ui/core/ListItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import grey from '@material-ui/core/colors/grey';
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 const actions = require('../Forms/actions');
 const port = 'http://localhost:3001/api';
 
@@ -97,7 +103,13 @@ class FormCases extends Component {
     }
     render() {
         const card_background = grey[200];
-        const { vals, handleChange, handleCheckBox } = this.props;
+        const { vals, handleChange, handleLocal, handleCheckBox } = this.props;
+        var radioval = '';
+        if(vals.VUrbana){
+            radioval = 'VUrbana';
+        } else if(vals.VRural){
+            radioval = 'VRural';
+        }
         return (
             <div>
                 <Grid container justify='flex-end' style={{ width: '70%', alignSelf: 'center', margin: '2%' }}>
@@ -231,18 +243,17 @@ class FormCases extends Component {
                         </CardContent>
                         <CardContent>
                             <Grid container alignContent="stretch" spacing={8}>
-                                <Grid item sm={4}>
-                                    <InputLabel htmlFor="ubicacion-violencia"> &nbsp; Ubicacion caso</InputLabel>
-                                    <List id="ubicacion-violencia">
-                                        <ListItem key="urbana">
-                                            <Checkbox id="Urbana" onChange={(e) => handleCheckBox(e, 'VUrbana')} checked={vals.VUrbana} />
-                                            <ListItemText primary="Urbana" />
-                                        </ListItem>
-                                        <ListItem key="rural">
-                                            <Checkbox onChange={(e) => handleCheckBox(e, 'VRural')} checked={vals.VRural} />
-                                            <ListItemText primary="Rural" />
-                                        </ListItem>
-                                    </List>
+                                <Grid item sm={4} className="caso">
+                                    <FormControl component="fieldset">
+                                        <FormLabel component="legend">Ubicacion caso</FormLabel>
+                                        <RadioGroup aria-label="ubicacion-caso" name="ubicacion-caso" 
+                                        value={radioval} 
+                                        onChange={handleLocal}
+                                        >
+                                        <FormControlLabel value="VUrbana" control={<Radio />} label="Urbana" />
+                                        <FormControlLabel value="VRural" control={<Radio />} label="Rural" />
+                                        </RadioGroup>
+                                    </FormControl>
                                 </Grid>
                                 <Grid item sm={4}>
                                     <InputLabel htmlFor="tipo-condicion"> &nbsp; Tipo de condicion</InputLabel>

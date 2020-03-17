@@ -18,6 +18,9 @@ import Cancel from "@material-ui/icons/Cancel";
 import Edit from "@material-ui/icons/Edit";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import DeleteIcon from "@material-ui/icons/Delete";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
 import Tooltip from "@material-ui/core/Tooltip";
 import MaterialTable from "material-table";
 import Grid from "@material-ui/core/Grid";
@@ -129,6 +132,9 @@ class Pacients extends Component {
 
   deletePaciente = async (id, name) => {
     if (window.confirm("¿Está seguro que desea eliminar a " + name + "?")) {
+      await Axios.delete(port + `api/caso/paciente/${id}`).then(res =>
+        console.log(res.data)
+      );
       await Axios.delete(port + `api/paciente/${id}`).then(res =>
         console.log(res.data)
       );
@@ -179,7 +185,7 @@ class Pacients extends Component {
                   <IconButton
                     onClick={() => this.goToReport({ rowData }, true)}
                   >
-                    <Cancel color="secondary"></Cancel>
+                    <ExitToAppIcon color="secondary"></ExitToAppIcon>
                   </IconButton>
                 </Tooltip>
               </Grid>
@@ -188,7 +194,7 @@ class Pacients extends Component {
                   <IconButton
                     onClick={() => this.goToReport({ rowData }, false)}
                   >
-                    <CheckCircle color="secondary"></CheckCircle>
+                    <DoneAllIcon color="secondary"></DoneAllIcon>
                   </IconButton>
                 </Tooltip>
               </Grid>
@@ -249,7 +255,7 @@ class Pacients extends Component {
             <Grid item xs={3}>
               <Tooltip title="Auditoria de Paciente">
                 <IconButton onClick={() => this.goToAuditoria({ rowData })}>
-                  <Info color="secondary"></Info>
+                  <MenuBookIcon color="secondary"></MenuBookIcon>
                 </IconButton>
               </Tooltip>
             </Grid>

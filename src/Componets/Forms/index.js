@@ -30,6 +30,18 @@ class Index extends Component {
         this.setState({ [input]: event.target.value });
 
     };
+
+    handleLocal = (event) => {
+        const input = event.target.value
+        if(input === 'VUrbana'){
+            this.setState({ [input]: true });
+            this.setState({ ['VRural']: false });
+        } else {
+            this.setState({ [input]: true });
+            this.setState({ ['VUrbana']: false });
+        }
+    }
+
     handleCheckBox = (event, input) => {
         if (event.target.checked) {
             this.setState({ [input]: true });
@@ -86,7 +98,7 @@ class Index extends Component {
             case 3:
                 return (
                     <div>
-                        <FormCases newStep={this.newStep} handleChange={this.handleChange} handleCheckBox={this.handleCheckBox} prevStep={this.prevStep} vals={vals} />
+                        <FormCases newStep={this.newStep} handleLocal={this.handleLocal} handleChange={this.handleChange} handleCheckBox={this.handleCheckBox} prevStep={this.prevStep} vals={vals} />
                     </div>
                 );
             case 4:
