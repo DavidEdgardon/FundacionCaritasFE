@@ -60,6 +60,7 @@ class Index extends Component {
       VUrbana: false,
       VRural: false
     };
+  }
 
     handleChange = (event, input) => {
       this.setState({ [input]: event.target.value });
