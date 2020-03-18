@@ -24,12 +24,19 @@ let ong = "";
 let juzgado = "";
 let fiscal = "";
 let nexpediente = "";
-let departamentos = [];
+//let departamentos = [];
 let EstadoCivil = [];
 let TipoEducacion = [];
 const port = "http://localhost:3001/api/";
 
 export class Form3 extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      departamentos: []
+    };
+  }
+
   back = e => {
     e.preventDefault();
     this.props.prevStep();
@@ -39,7 +46,7 @@ export class Form3 extends Component {
     await this.getDepartamentos();
     await this.getEstadoCivil();
     await this.getTipoEducacion();
-    console.log(departamentos);
+    console.log(this.state.departamentos);
     let ninos, ninas, otros;
     if (this.props.vals.VPsicologica) {
       vpsicologica = " Psicologica ";
@@ -91,7 +98,7 @@ export class Form3 extends Component {
 
   getDepartamentos = async () => {
     await Axios.get(port + "departamento")
-      .then(res => (departamentos = res.data))
+      .then(res => this.setState({ departamentos: res.data }))
       .catch(error => console.log(error));
   };
 
@@ -108,26 +115,32 @@ export class Form3 extends Component {
   };
 
   getStringData = (id, option) => {
-    console.log(departamentos);
+    let result = "";
+    console.log(this.state.departamentos);
+    console.log(option);
+    console.log(id);
     if (option === "departamento") {
-      departamentos.forEach(e => {
+      this.state.departamentos.forEach(e => {
+        console.log(e);
         if (e.id_departamento === id) {
-          return e.nombre;
+          console.log(e.nombre);
+          result = e.nombre;
         }
       });
     } else if (option === "estadocivil") {
       EstadoCivil.forEach(e => {
         if (e.id_estadoc === id) {
-          return e.estado;
+          result = e.estado;
         }
       });
     } else {
       TipoEducacion.forEach(e => {
         if (e.id_educacion === id) {
-          return e.educacion;
+          result = e.educacion;
         }
       });
     }
+    return result;
   };
 
   render() {
@@ -143,12 +156,10 @@ export class Form3 extends Component {
       return date;
     }
 
-    function getDepartamento(){
-        
-    }
+    function getDepartamento() {}
 
     const fechaActual = getDate();
-    if (departamentos.length === 0) {
+    if (this.state.departamentos.length !== 0) {
       return (
         <div>
           <div className="right">
@@ -256,7 +267,7 @@ export class Form3 extends Component {
                     </p>
                     <p className="c13">
                       <span className="c7">
-                        {departamentos[Number(vals.Departamento) - 1]}
+                        {this.getStringData(vals.Departamento, "departamento")}
                       </span>
                     </p>
                   </td>
