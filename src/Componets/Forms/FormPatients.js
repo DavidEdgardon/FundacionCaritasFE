@@ -98,7 +98,7 @@ class FormPatients extends Component {
     const { vals, handleChange } = this.props;
     const card_background = grey[200];
     return (
-      <div>
+      <div className="d-flex justify-content-center">
         <Grid
           co
           ntainer

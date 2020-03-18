@@ -62,7 +62,6 @@ class ReportPantientDialog extends Component {
   getDataToPDF = async data => {
     let img = await html2canvas(document.querySelector(data)).then(
       async canvas => {
-        document.body.appendChild(canvas);
         let img = await canvas.toDataURL("image/png");
         return img;
       }
@@ -81,9 +80,8 @@ class ReportPantientDialog extends Component {
     docPDF.output("dataurlnewwindow");
   };
 
-  render() {
-    const { vals } = this.props;
-    let bodyReport1 =
+  getBodyReport1 = () => {
+    return (
       "Pastoral Social Caritas Diócesis de San Pedro Sula, notifica que el Sr. (a): " +
       this.state.reporte.nombres +
       " " +
@@ -94,10 +92,33 @@ class ReportPantientDialog extends Component {
       this.state.report +
       " el esquema de Consejería, al que fue remitido por el " +
       this.state.reporte.juez +
-      ".";
-    let bodyReport2 =
+      "."
+    );
+  };
+
+  getBodyReport2 = () => {
+    return (
       "Se extiende la presente constancia en la ciudad de San Pedro Sula, departamento de Cortes el " +
-      this.state.reporte.date;
+      this.state.reporte.date +
+      "."
+    );
+  };
+
+  spacer = n => {
+    let array = [];
+    for (let c = 0; c < n; c++) {
+      array.push(c);
+    }
+    let result = array.map(d => {
+      return <br key={d} />;
+    });
+    return result;
+  };
+
+  render() {
+    const { vals } = this.props;
+    let bodyReport1 = this.getBodyReport1();
+    let bodyReport2 = this.getBodyReport2();
 
     return (
       <div>
@@ -147,8 +168,9 @@ class ReportPantientDialog extends Component {
           <br></br>
           <Row>
             <span className="center-spacer"></span>
-
-            <img id="logo" src={logo} alt="Logo"></img>
+            <div style={{ width: "17.59cm" }}>
+              <img id="logo" src={logo} alt="Logo"></img>
+            </div>
 
             <span className="center-spacer"></span>
           </Row>
@@ -162,18 +184,10 @@ class ReportPantientDialog extends Component {
                   : this.state.reporte.juez}
               </p>
               <p>Ciudad.</p>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-
+              {this.spacer(4)}
               <p>{bodyReport1}</p>
               <p>{bodyReport2}</p>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
-              <br></br>
+              {this.spacer(5)}
               <p>{"Lic. " + this.state.reporte.nombre}</p>
               <p>{this.state.reporte.codigo}</p>
             </div>

@@ -5,7 +5,8 @@ import logo from "../Recursos/logo_nav_bar.jpeg";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Button from "@material-ui/core/Button";
-import Box from '@material-ui/core/Box';
+import "../../styles/dialogReport.css";
+import Box from "@material-ui/core/Box";
 
 class appBar extends Component {
   render() {
@@ -25,7 +26,6 @@ class appBar extends Component {
                 <Tab label="Formulario" />
                 <Tab label="Estadisticas" />
                 <Tab id="Pacientes" label="Pacientes" />
-                <Tab id="Casos" label="Casos" />
                 <Tab id="Config" label="Configuracion" />
               </Tabs>
               <Box
@@ -34,10 +34,11 @@ class appBar extends Component {
                 top={0}
                 left="85%"
                 zIndex="tooltip"
-            >
-              <Button color="inherit" onClick={this.props.logout}>
-                Cerrar Sesión
-              </Button></Box>
+              >
+                <Button color="inherit" onClick={this.props.logout}>
+                  Cerrar Sesión
+                </Button>
+              </Box>
             </Toolbar>
           </AppBar>
         </div>
@@ -55,10 +56,19 @@ class appBar extends Component {
               <Tabs value={values} onChange={this.props.handleChangeValue}>
                 <Tab label="Formulario" />
                 <Tab label="Estadisticas" />
+                <Tab id="Pacientes" label="Pacientes" />
               </Tabs>
-              <Button color="inherit" onClick={this.props.logout}>
-                Cerrar Sesión
-              </Button>
+              <Box
+                p={1}
+                position="absolute"
+                top={0}
+                left="85%"
+                zIndex="tooltip"
+              >
+                <Button color="inherit" onClick={this.props.logout}>
+                  Cerrar Sesión
+                </Button>
+              </Box>
             </Toolbar>
           </AppBar>
         </div>
