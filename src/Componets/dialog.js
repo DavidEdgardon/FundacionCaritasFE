@@ -97,7 +97,7 @@ class FullScreenDialog extends Component {
 
   deleteFunc = () => {
     axios
-      .delete(`http://apicaritas.herokuapp.com/api/paciente/${this.state.Id}`)
+      .delete(port + `api/paciente/${this.state.Id}`)
       .then(res => console.log(res.data));
 
     if (
