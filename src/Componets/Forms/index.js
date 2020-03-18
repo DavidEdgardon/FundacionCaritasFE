@@ -61,36 +61,28 @@ class Index extends Component {
       VRural: false
     };
   }
+  handleChange = (event, input) => {
+    this.setState({ [input]: event.target.value });
+  };
 
-    handleChange = (event, input) => {
-      this.setState({ [input]: event.target.value });
-    };
+  handleLocal = event => {
+    const input = event.target.value;
+    if (input === "VUrbana") {
+      this.setState({ [input]: true });
+      this.setState({ ["VRural"]: false });
+    } else {
+      this.setState({ [input]: true });
+      this.setState({ ["VUrbana"]: false });
+    }
+  };
 
-    handleLocal = event => {
-      const input = event.target.value;
-      if (input === "VUrbana") {
-        this.setState({ [input]: true });
-        this.setState({ ["VRural"]: false });
-      } else {
-        this.setState({ [input]: true });
-        this.setState({ ["VUrbana"]: false });
-      }
-    };
-
-    handleCheckBox = (event, input) => {
-      if (event.target.checked) {
-        this.setState({ [input]: true });
-      } else {
-        this.setState({ [input]: false });
-      }
-    };
-    newStep = () => {
-      this.setState({ steps: this.state.steps + 1 });
-    };
-    prevStep = () => {
-      this.setState({ steps: this.state.steps - 1 });
-    };
-  }
+  handleCheckBox = (event, input) => {
+    if (event.target.checked) {
+      this.setState({ [input]: true });
+    } else {
+      this.setState({ [input]: false });
+    }
+  };
   newStep = () => {
     this.setState({ steps: this.state.steps + 1 });
   };
@@ -244,9 +236,8 @@ class Index extends Component {
         );
       case 2:
         return (
-          <div className="text-center">
+          <div style={{ alignContent: "center" }}>
             <FormPatients
-              className="d-flex justify-content-center"
               newStep={this.newStep}
               handleChange={this.handleChange}
               vals={vals}
@@ -259,6 +250,7 @@ class Index extends Component {
           <div>
             <FormCases
               newStep={this.newStep}
+              handleLocal={this.handleLocal}
               handleChange={this.handleChange}
               handleCheckBox={this.handleCheckBox}
               prevStep={this.prevStep}
