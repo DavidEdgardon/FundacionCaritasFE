@@ -60,17 +60,36 @@ class Index extends Component {
       VUrbana: false,
       VRural: false
     };
+
+    handleChange = (event, input) => {
+      this.setState({ [input]: event.target.value });
+    };
+
+    handleLocal = event => {
+      const input = event.target.value;
+      if (input === "VUrbana") {
+        this.setState({ [input]: true });
+        this.setState({ ["VRural"]: false });
+      } else {
+        this.setState({ [input]: true });
+        this.setState({ ["VUrbana"]: false });
+      }
+    };
+
+    handleCheckBox = (event, input) => {
+      if (event.target.checked) {
+        this.setState({ [input]: true });
+      } else {
+        this.setState({ [input]: false });
+      }
+    };
+    newStep = () => {
+      this.setState({ steps: this.state.steps + 1 });
+    };
+    prevStep = () => {
+      this.setState({ steps: this.state.steps - 1 });
+    };
   }
-  handleChange = (event, input) => {
-    this.setState({ [input]: event.target.value });
-  };
-  handleCheckBox = (event, input) => {
-    if (event.target.checked) {
-      this.setState({ [input]: true });
-    } else {
-      this.setState({ [input]: false });
-    }
-  };
   newStep = () => {
     this.setState({ steps: this.state.steps + 1 });
   };

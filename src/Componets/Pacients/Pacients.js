@@ -18,6 +18,9 @@ import Cancel from "@material-ui/icons/Cancel";
 import Edit from "@material-ui/icons/Edit";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import DeleteIcon from "@material-ui/icons/Delete";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import DoneAllIcon from '@material-ui/icons/DoneAll';
+import MenuBookIcon from '@material-ui/icons/MenuBook';
 import Tooltip from "@material-ui/core/Tooltip";
 import MaterialTable from "material-table";
 import Grid from "@material-ui/core/Grid";
@@ -127,6 +130,18 @@ class Pacients extends Component {
     this.handleClickOpenDialogViewCaso();
   };
 
+  deletePaciente = async (id, name) => {
+    if (window.confirm("¿Está seguro que desea eliminar a " + name + "?")) {
+      await Axios.delete(port + `api/caso/paciente/${id}`).then(res =>
+        console.log(res.data)
+      );
+      await Axios.delete(port + `api/paciente/${id}`).then(res =>
+        console.log(res.data)
+      );
+      this.fetchPacientsData();
+    }
+  };
+
   render() {
     const { open, open2, hide, selectedRow } = this.state;
     const vals = { open, open2, hide, selectedRow };
@@ -160,34 +175,31 @@ class Pacients extends Component {
 
     const columns = [
       {
-        field: "acciones",
-        title: "Acciones",
+        field: "reportes",
+        title: "Constancias",
         render: rowData => (
-          <Grid container spacing={3}>
-            <Grid item xs={3}>
-              <Tooltip title="Auditoria de Paciente">
-                <IconButton onClick={() => this.goToAuditoria({ rowData })}>
-                  <Info color="secondary"></Info>
-                </IconButton>
-              </Tooltip>
+          <div>
+            <Grid container spacing={3}>
+              <Grid item xs={3}>
+                <Tooltip title="Abandono">
+                  <IconButton
+                    onClick={() => this.goToReport({ rowData }, true)}
+                  >
+                    <ExitToAppIcon color="secondary"></ExitToAppIcon>
+                  </IconButton>
+                </Tooltip>
+              </Grid>
+              <Grid item xs={3}>
+                <Tooltip title="Terminado">
+                  <IconButton
+                    onClick={() => this.goToReport({ rowData }, false)}
+                  >
+                    <DoneAllIcon color="secondary"></DoneAllIcon>
+                  </IconButton>
+                </Tooltip>
+              </Grid>
             </Grid>
-            <Grid item xs={3}>
-              <Tooltip title="Editar Paciente">
-                <IconButton onClick={() => this.datas({ rowData })}>
-                  <Edit color="secondary"></Edit>
-                </IconButton>
-              </Tooltip>
-            </Grid>
-            <Grid item xs={3}>
-              <Tooltip title="Ver Caso">
-                <IconButton
-                  onClick={() => this.goToViewCaso({ rowData }, true)}
-                >
-                  <VisibilityIcon color="secondary"></VisibilityIcon>
-                </IconButton>
-              </Tooltip>
-            </Grid>
-          </Grid>
+          </div>
         )
       },
       {
@@ -227,31 +239,45 @@ class Pacients extends Component {
         field: "educacion"
       },
       {
-        field: "reportes",
-        title: "Constancias",
+        field: "acciones",
+        title: "Acciones",
         render: rowData => (
-          <div>
-            <Grid container spacing={3}>
-              <Grid item xs={3}>
-                <Tooltip title="Abandono">
-                  <IconButton
-                    onClick={() => this.goToReport({ rowData }, true)}
-                  >
-                    <Cancel color="secondary"></Cancel>
-                  </IconButton>
-                </Tooltip>
-              </Grid>
-              <Grid item xs={3}>
-                <Tooltip title="Terminado">
-                  <IconButton
-                    onClick={() => this.goToReport({ rowData }, false)}
-                  >
-                    <CheckCircle color="secondary"></CheckCircle>
-                  </IconButton>
-                </Tooltip>
-              </Grid>
+          <Grid container spacing={3}>
+            <Grid item xs={3}>
+              <Tooltip title="Ver Caso">
+                <IconButton
+                  onClick={() => this.goToViewCaso({ rowData }, true)}
+                >
+                  <VisibilityIcon color="secondary"></VisibilityIcon>
+                </IconButton>
+              </Tooltip>
             </Grid>
-          </div>
+            <Grid item xs={3}>
+              <Tooltip title="Auditoria de Paciente">
+                <IconButton onClick={() => this.goToAuditoria({ rowData })}>
+                  <MenuBookIcon color="secondary"></MenuBookIcon>
+                </IconButton>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={3}>
+              <Tooltip title="Editar Paciente">
+                <IconButton onClick={() => this.datas({ rowData })}>
+                  <Edit color="secondary"></Edit>
+                </IconButton>
+              </Tooltip>
+            </Grid>
+            <Grid item xs={3}>
+              <Tooltip title="Eliminar paciente">
+                <IconButton
+                  onClick={() =>
+                    this.deletePaciente(rowData.id_paciente, rowData.nombre)
+                  }
+                >
+                  <DeleteIcon color="secondary"></DeleteIcon>
+                </IconButton>
+              </Tooltip>
+            </Grid>
+          </Grid>
         )
       }
     ];
