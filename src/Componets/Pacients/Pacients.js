@@ -57,7 +57,10 @@ class Pacients extends Component {
       openReport: false,
       openViewCaso: false,
       isAbandon: false,
-      isLoading: false
+      isLoading: false,
+      estadoCivilSelect: {},
+      trabajoSelect: {},
+      educacionSelect: {}
     };
   }
   handleModal() {
@@ -66,6 +69,10 @@ class Pacients extends Component {
 
   componentDidMount = async () => {
     await this.fetchPacientsData();
+    await this.getEstadoCivil();
+    console.log(this.state.estadoCivilSelect);
+    await this.getTabajo();
+    await this.getEducacion();
   };
 
   fetchPacientsData = async () => {
@@ -113,6 +120,49 @@ class Pacients extends Component {
     //this.setState({ hide: false });
   };
 
+  getEstadoCivil = async () => {
+    await Axios.get(port + "api/estadocivil")
+      .then(res => {
+        let array = new Array();
+        array = res.data;
+        let newObj = {};
+        for (let c = 0; c < array.length; c++) {
+          newObj[array[c].id_estadoc] = array[c].estado;
+        }
+        console.log(newObj);
+        this.setState({ estadoCivilSelect: newObj });
+      })
+      .catch(error => console.log(error));
+  };
+
+  getTabajo = async () => {
+    await Axios.get(port + "api/estadoocupacion")
+      .then(res => {
+        let array = new Array();
+        array = res.data;
+        let newObj = {};
+        for (let c = 0; c < array.length; c++) {
+          newObj[array[c].id_estado] = array[c].tipo;
+        }
+        this.setState({ trabajoSelect: newObj });
+      })
+      .catch(error => console.log(error));
+  };
+
+  getEducacion = async () => {
+    await Axios.get(port + "api/educacion")
+      .then(res => {
+        let array = new Array();
+        array = res.data;
+        let newObj = {};
+        for (let c = 0; c < array.length; c++) {
+          newObj[array[c].id_educacion] = array[c].tipo;
+        }
+        this.setState({ educacionSelect: newObj });
+      })
+      .catch(error => console.log(error));
+  };
+
   datas = selectedRow => {
     this.setState({ selectedRow: [selectedRow.rowData] });
     this.handleClickOpen();
@@ -145,7 +195,12 @@ class Pacients extends Component {
     //}
   };
 
-  updatePaciente = async newData => {};
+  updatePaciente = async newData => {
+    await Axios.put(
+      port + `api/paciente/update/${newData.id_paciente}`,
+      newData
+    ).then(res => console.log(res));
+  };
 
   render() {
     const { open, open2, hide, selectedRow } = this.state;
@@ -215,15 +270,18 @@ class Pacients extends Component {
       },
       {
         title: "Estado Civil",
-        field: "id_estadoc"
+        field: "id_estadoc",
+        lookup: this.state.estadoCivilSelect
       },
       {
         title: "Trabajo",
-        field: "id_estado"
+        field: "id_estado",
+        lookup: this.state.trabajoSelect
       },
       {
         title: "Educacion",
-        field: "id_educacion"
+        field: "id_educacion",
+        lookup: this.state.educacionSelect
       },
       {
         field: "ver",
@@ -283,7 +341,7 @@ class Pacients extends Component {
                     resolve();
                     if (oldData) {
                       // Update in DataBase
-
+                      this.updatePaciente(newData);
                       // Update in the state
                       this.setState(prevState => {
                         const list = [...prevState.list];
