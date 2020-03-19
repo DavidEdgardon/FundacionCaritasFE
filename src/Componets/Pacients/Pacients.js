@@ -13,14 +13,14 @@ import Dialog from "../dialog";
 import Axios from "axios";
 import IconButton from "@material-ui/core/IconButton";
 import Info from "@material-ui/icons/Info";
-import CheckCircle from "@material-ui/icons/CheckCircle";
+import CheckIcon from "@material-ui/icons/Check";
 import Cancel from "@material-ui/icons/Cancel";
 import Edit from "@material-ui/icons/Edit";
 import VisibilityIcon from "@material-ui/icons/Visibility";
 import DeleteIcon from "@material-ui/icons/Delete";
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
-import MenuBookIcon from '@material-ui/icons/MenuBook';
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import DoneAllIcon from "@material-ui/icons/DoneAll";
+import MenuBookIcon from "@material-ui/icons/MenuBook";
 import Tooltip from "@material-ui/core/Tooltip";
 import MaterialTable from "material-table";
 import Grid from "@material-ui/core/Grid";
@@ -39,7 +39,10 @@ const tableIcons = {
   PreviousPage: ChevronLeft,
   Search: Search,
   SortArrow: ArrowUpward,
-  ViewColumn: ViewColumn
+  ViewColumn: ViewColumn,
+  Check: CheckIcon,
+  Edit: Edit,
+  Delete: DeleteIcon
 };
 
 class Pacients extends Component {
@@ -54,7 +57,10 @@ class Pacients extends Component {
       openReport: false,
       openViewCaso: false,
       isAbandon: false,
-      isLoading: false
+      isLoading: false,
+      estadoCivilSelect: {},
+      trabajoSelect: {},
+      educacionSelect: {}
     };
   }
   handleModal() {
@@ -63,6 +69,10 @@ class Pacients extends Component {
 
   componentDidMount = async () => {
     await this.fetchPacientsData();
+    await this.getEstadoCivil();
+    console.log(this.state.estadoCivilSelect);
+    await this.getTabajo();
+    await this.getEducacion();
   };
 
   fetchPacientsData = async () => {
@@ -110,6 +120,49 @@ class Pacients extends Component {
     //this.setState({ hide: false });
   };
 
+  getEstadoCivil = async () => {
+    await Axios.get(port + "api/estadocivil")
+      .then(res => {
+        let array = new Array();
+        array = res.data;
+        let newObj = {};
+        for (let c = 0; c < array.length; c++) {
+          newObj[array[c].id_estadoc] = array[c].estado;
+        }
+        console.log(newObj);
+        this.setState({ estadoCivilSelect: newObj });
+      })
+      .catch(error => console.log(error));
+  };
+
+  getTabajo = async () => {
+    await Axios.get(port + "api/estadoocupacion")
+      .then(res => {
+        let array = new Array();
+        array = res.data;
+        let newObj = {};
+        for (let c = 0; c < array.length; c++) {
+          newObj[array[c].id_estado] = array[c].tipo;
+        }
+        this.setState({ trabajoSelect: newObj });
+      })
+      .catch(error => console.log(error));
+  };
+
+  getEducacion = async () => {
+    await Axios.get(port + "api/educacion")
+      .then(res => {
+        let array = new Array();
+        array = res.data;
+        let newObj = {};
+        for (let c = 0; c < array.length; c++) {
+          newObj[array[c].id_educacion] = array[c].tipo;
+        }
+        this.setState({ educacionSelect: newObj });
+      })
+      .catch(error => console.log(error));
+  };
+
   datas = selectedRow => {
     this.setState({ selectedRow: [selectedRow.rowData] });
     this.handleClickOpen();
@@ -130,16 +183,23 @@ class Pacients extends Component {
     this.handleClickOpenDialogViewCaso();
   };
 
-  deletePaciente = async (id, name) => {
-    if (window.confirm("¿Está seguro que desea eliminar a " + name + "?")) {
-      await Axios.delete(port + `api/caso/paciente/${id}`).then(res =>
-        console.log(res.data)
-      );
-      await Axios.delete(port + `api/paciente/${id}`).then(res =>
-        console.log(res.data)
-      );
-      this.fetchPacientsData();
-    }
+  deletePaciente = async id => {
+    // if (window.confirm("¿Está seguro que desea eliminar a " + name + "?")) {
+    await Axios.delete(port + `api/caso/paciente/${id}`).then(res =>
+      console.log(res.data)
+    );
+    await Axios.delete(port + `api/paciente/${id}`).then(res =>
+      console.log(res.data)
+    );
+    // this.fetchPacientsData();
+    //}
+  };
+
+  updatePaciente = async newData => {
+    await Axios.put(
+      port + `api/paciente/update/${newData.id_paciente}`,
+      newData
+    ).then(res => console.log(res));
   };
 
   render() {
@@ -161,7 +221,17 @@ class Pacients extends Component {
       },
       body: {
         emptyDataSourceMessage: "No se encontraron registros",
-        filterTooltip: "Filtrar"
+        filterTooltip: "Filtrar",
+        editTooltip: "Editar",
+        deleteTooltip: "Eliminar",
+        editRow: {
+          saveTooltip: "Guardar",
+          cancelTooltip: "Cancelar",
+          deleteText: "Estás seguro que quieres eliminar este paciente?"
+        }
+      },
+      header: {
+        actions: "Acciones"
       },
       toolbar: {
         searchTooltip: "Buscar",
@@ -175,44 +245,16 @@ class Pacients extends Component {
 
     const columns = [
       {
-        field: "reportes",
-        title: "Constancias",
-        render: rowData => (
-          <div>
-            <Grid container spacing={3}>
-              <Grid item xs={3}>
-                <Tooltip title="Abandono">
-                  <IconButton
-                    onClick={() => this.goToReport({ rowData }, true)}
-                  >
-                    <ExitToAppIcon color="secondary"></ExitToAppIcon>
-                  </IconButton>
-                </Tooltip>
-              </Grid>
-              <Grid item xs={3}>
-                <Tooltip title="Terminado">
-                  <IconButton
-                    onClick={() => this.goToReport({ rowData }, false)}
-                  >
-                    <DoneAllIcon color="secondary"></DoneAllIcon>
-                  </IconButton>
-                </Tooltip>
-              </Grid>
-            </Grid>
-          </div>
-        )
-      },
-      {
         title: "Identidad",
         field: "identidad"
       },
       {
         title: "Nombre",
-        field: "nombre"
+        field: "nombres"
       },
       {
         title: "Apellidos",
-        field: "apellido"
+        field: "apellidos"
       },
       {
         title: "Edad",
@@ -228,23 +270,26 @@ class Pacients extends Component {
       },
       {
         title: "Estado Civil",
-        field: "estado_civil"
+        field: "id_estadoc",
+        lookup: this.state.estadoCivilSelect
       },
       {
         title: "Trabajo",
-        field: "trabajo"
+        field: "id_estado",
+        lookup: this.state.trabajoSelect
       },
       {
         title: "Educacion",
-        field: "educacion"
+        field: "id_educacion",
+        lookup: this.state.educacionSelect
       },
       {
-        field: "acciones",
-        title: "Acciones",
+        field: "ver",
+        title: "Ver",
         render: rowData => (
           <Grid container spacing={3}>
             <Grid item xs={3}>
-              <Tooltip title="Ver Caso">
+              <Tooltip title="Caso del paciente">
                 <IconButton
                   onClick={() => this.goToViewCaso({ rowData }, true)}
                 >
@@ -253,27 +298,23 @@ class Pacients extends Component {
               </Tooltip>
             </Grid>
             <Grid item xs={3}>
-              <Tooltip title="Auditoria de Paciente">
+              <Tooltip title="Auditoria del Paciente">
                 <IconButton onClick={() => this.goToAuditoria({ rowData })}>
                   <MenuBookIcon color="secondary"></MenuBookIcon>
                 </IconButton>
               </Tooltip>
             </Grid>
             <Grid item xs={3}>
-              <Tooltip title="Editar Paciente">
-                <IconButton onClick={() => this.datas({ rowData })}>
-                  <Edit color="secondary"></Edit>
+              <Tooltip title="Reporte de Abandono">
+                <IconButton onClick={() => this.goToReport({ rowData }, true)}>
+                  <ExitToAppIcon color="secondary"></ExitToAppIcon>
                 </IconButton>
               </Tooltip>
             </Grid>
             <Grid item xs={3}>
-              <Tooltip title="Eliminar paciente">
-                <IconButton
-                  onClick={() =>
-                    this.deletePaciente(rowData.id_paciente, rowData.nombre)
-                  }
-                >
-                  <DeleteIcon color="secondary"></DeleteIcon>
+              <Tooltip title="Reporte de Terminado">
+                <IconButton onClick={() => this.goToReport({ rowData }, false)}>
+                  <DoneAllIcon color="secondary"></DoneAllIcon>
                 </IconButton>
               </Tooltip>
             </Grid>
@@ -293,6 +334,38 @@ class Pacients extends Component {
             isLoading={this.state.isLoading}
             localization={pagination}
             options={options}
+            editable={{
+              onRowUpdate: (newData, oldData) =>
+                new Promise(resolve => {
+                  setTimeout(() => {
+                    resolve();
+                    if (oldData) {
+                      // Update in DataBase
+                      this.updatePaciente(newData);
+                      // Update in the state
+                      this.setState(prevState => {
+                        const list = [...prevState.list];
+                        list[list.indexOf(oldData)] = newData;
+                        return { ...prevState, list };
+                      });
+                    }
+                  }, 600);
+                }),
+              onRowDelete: oldData =>
+                new Promise(resolve => {
+                  setTimeout(() => {
+                    resolve();
+                    //Delete in DataBase
+                    this.deletePaciente(oldData.id_paciente);
+                    //Delete in state
+                    this.setState(prevState => {
+                      const list = [...prevState.list];
+                      list.splice(list.indexOf(oldData), 1);
+                      return { ...prevState, list };
+                    });
+                  }, 600);
+                })
+            }}
           />
         </div>
 
