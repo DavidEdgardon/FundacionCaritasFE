@@ -25,15 +25,16 @@ let juzgado = "";
 let fiscal = "";
 let nexpediente = "";
 //let departamentos = [];
-let EstadoCivil = [];
-let TipoEducacion = [];
+
 const port = "http://localhost:3001/api/";
 
 export class Form3 extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      departamentos: []
+      departamentos: [],
+      estadoCivil: [],
+      tipoEducacion: []
     };
   }
 
@@ -46,7 +47,7 @@ export class Form3 extends Component {
     await this.getDepartamentos();
     await this.getEstadoCivil();
     await this.getTipoEducacion();
-    console.log(this.state.departamentos);
+    console.log(this.state.tipoEducacion);
     let ninos, ninas, otros;
     if (this.props.vals.VPsicologica) {
       vpsicologica = " Psicologica ";
@@ -104,41 +105,45 @@ export class Form3 extends Component {
 
   getEstadoCivil = async () => {
     await Axios.get(port + "estadocivil")
-      .then(res => (EstadoCivil = res.data))
+      .then(res => this.setState({ estadoCivil: res.data }))
       .catch(error => console.log(error));
   };
 
   getTipoEducacion = async () => {
     await Axios.get(port + "educacion")
-      .then(res => (TipoEducacion = res.data))
+      .then(res => this.setState({ tipoEducacion: res.data }))
       .catch(error => console.log(error));
   };
 
-  getStringData = (id, option) => {
+  deparamentoToString = id => {
     let result = "";
-    console.log(this.state.departamentos);
-    console.log(option);
-    console.log(id);
-    if (option === "departamento") {
-      this.state.departamentos.forEach(e => {
-        console.log(e);
-        if (e.id_departamento === id) {
-          console.log(e.nombre);
-          result = e.nombre;
-        }
-      });
-    } else if (option === "estadocivil") {
-      EstadoCivil.forEach(e => {
-        if (e.id_estadoc === id) {
-          result = e.estado;
-        }
-      });
-    } else {
-      TipoEducacion.forEach(e => {
-        if (e.id_educacion === id) {
-          result = e.educacion;
-        }
-      });
+    for (let i = 0; i < this.state.departamentos.length; i++) {
+      if (this.state.departamentos[i].id_departamento == id) {
+        result = this.state.departamentos[i].nombre;
+        break;
+      }
+    }
+    return result;
+  };
+
+  estadoCivilToString = id => {
+    let result = "";
+    for (let i = 0; i < this.state.estadoCivil.length; i++) {
+      if (this.state.estadoCivil[i].id_estadoc == id) {
+        result = this.state.estadoCivil[i].estado;
+        break;
+      }
+    }
+    return result;
+  };
+
+  tipoEducacionToString = id => {
+    let result = "";
+    for (let i = 0; i < this.state.tipoEducacion.length; i++) {
+      if (this.state.tipoEducacion[i].id_educacion == id) {
+        result = this.state.tipoEducacion[i].tipo;
+        break;
+      }
     }
     return result;
   };
@@ -155,9 +160,6 @@ export class Form3 extends Component {
           today.getFullYear();
       return date;
     }
-
-    function getDepartamento() {}
-
     const fechaActual = getDate();
     if (this.state.departamentos.length !== 0) {
       return (
@@ -267,7 +269,7 @@ export class Form3 extends Component {
                     </p>
                     <p className="c13">
                       <span className="c7">
-                        {this.getStringData(vals.Departamento, "departamento")}
+                        {this.deparamentoToString(vals.Departamento)}
                       </span>
                     </p>
                   </td>
@@ -295,7 +297,7 @@ export class Form3 extends Component {
                     </p>
                     <p className="c13">
                       <span className="c7">
-                        {this.getStringData(vals.EstadoCivil, "estadocivil")}
+                        {this.estadoCivilToString(vals.EstadoCivil)}
                       </span>
                     </p>
                   </td>
@@ -312,7 +314,9 @@ export class Form3 extends Component {
                       <span className="c8">TIPO DE EDUCACI&Oacute;N</span>
                     </p>
                     <p className="c13">
-                      <span className="c7">{vals.Educacion}</span>
+                      <span className="c7">
+                        {this.tipoEducacionToString(vals.Educacion)}
+                      </span>
                     </p>
                   </td>
                 </tr>
@@ -416,7 +420,9 @@ export class Form3 extends Component {
                       <span className="c8">DEPARTAMENTO</span>
                     </p>
                     <p className="c13">
-                      <span className="c7">{vals.DepartamentoD}</span>
+                      <span className="c7">
+                        {this.deparamentoToString(vals.DepartamentoD)}
+                      </span>
                     </p>
                   </td>
                   <td className="c6" colSpan="2" rowSpan="1">
@@ -442,7 +448,9 @@ export class Form3 extends Component {
                       <span className="c8">ESTADO CIVIL</span>
                     </p>
                     <p className="c13">
-                      <span className="c7">{vals.EstadoCivilD}</span>
+                      <span className="c7">
+                        {this.estadoCivilToString(vals.EstadoCivilD)}
+                      </span>
                     </p>
                   </td>
                   <td className="c6" colSpan="2" rowSpan="1">
@@ -458,7 +466,9 @@ export class Form3 extends Component {
                       <span className="c8">TIPO DE EDUCACI&Oacute;N</span>
                     </p>
                     <p className="c13">
-                      <span className="c7">{vals.EducacionD}</span>
+                      <span className="c7">
+                        {this.tipoEducacionToString(vals.EducacionD)}
+                      </span>
                     </p>
                   </td>
                 </tr>
