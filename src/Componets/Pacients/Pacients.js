@@ -60,7 +60,8 @@ class Pacients extends Component {
       isLoading: false,
       estadoCivilSelect: {},
       trabajoSelect: {},
-      educacionSelect: {}
+      educacionSelect: {},
+      departamentoSelect: {}
     };
   }
   handleModal() {
@@ -70,9 +71,9 @@ class Pacients extends Component {
   componentDidMount = async () => {
     await this.fetchPacientsData();
     await this.getEstadoCivil();
-    console.log(this.state.estadoCivilSelect);
     await this.getTabajo();
     await this.getEducacion();
+    await this.getDepartamentos();
   };
 
   fetchPacientsData = async () => {
@@ -159,6 +160,20 @@ class Pacients extends Component {
           newObj[array[c].id_educacion] = array[c].tipo;
         }
         this.setState({ educacionSelect: newObj });
+      })
+      .catch(error => console.log(error));
+  };
+
+  getDepartamentos = async () => {
+    await Axios.get(port + "api/departamento")
+      .then(res => {
+        let array = new Array();
+        array = res.data;
+        let newObj = {};
+        for (let c = 0; c < array.length; c++) {
+          newObj[array[c].id_departamento] = array[c].nombre;
+        }
+        this.setState({ departamentoSelect: newObj });
       })
       .catch(error => console.log(error));
   };
@@ -284,6 +299,11 @@ class Pacients extends Component {
         lookup: this.state.educacionSelect
       },
       {
+        title: "Deparamento",
+        field: "id_departamento",
+        lookup: this.state.departamentoSelect
+      },
+      {
         field: "ver",
         title: "Ver",
         render: rowData => (
@@ -304,6 +324,14 @@ class Pacients extends Component {
                 </IconButton>
               </Tooltip>
             </Grid>
+          </Grid>
+        )
+      },
+      {
+        field: "reportes",
+        title: "Reportes",
+        render: rowData => (
+          <Grid container spacing={3}>
             <Grid item xs={3}>
               <Tooltip title="Reporte de Abandono">
                 <IconButton onClick={() => this.goToReport({ rowData }, true)}>
