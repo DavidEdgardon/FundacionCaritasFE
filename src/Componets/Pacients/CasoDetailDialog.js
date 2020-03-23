@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import Dialog from "@material-ui/core/Dialog";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
+import { Dialog, AppBar, Toolbar } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import CloseIcon from "@material-ui/icons/Close";
@@ -23,6 +21,13 @@ import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+//Check group
+import FormLabel from "@material-ui/core/FormLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Checkbox from "@material-ui/core/Checkbox";
 
 import "../../styles/dialogReport.css";
 
@@ -42,7 +47,10 @@ class CasoDetailDialog extends Component {
       isError: false,
       recursosMunicipales: [],
       causasViolencia: [],
-      tipoViolencia: []
+      tipoViolencia: [],
+      recursosSelect: {},
+      selectedRecursos: [],
+      selectedRecurso: {}
     };
   }
 
@@ -123,6 +131,8 @@ class CasoDetailDialog extends Component {
   componentDidMount = async e => {
     let id = this.props.vals.selectedRow[0].id_paciente;
     await this.getRecursosMunicipales();
+    console.log(this.state.recursosSelect);
+    this.setState({ selectedRecurso: null });
     await this.getCausasViolencia();
     await this.getTipoViolencia();
     this.getData(id);
@@ -131,8 +141,15 @@ class CasoDetailDialog extends Component {
   getData = id => {
     Axios.get(port + "caso/detail/" + `${id}`)
       .then(res => {
-        this.setState({ casoData: res.data });
-        console.log(this.state.casoData);
+        let data = new Array();
+        let newData = new Array();
+        data = res.data;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].borrado == 1) {
+            newData.push(data[i]);
+          }
+        }
+        this.setState({ casoData: newData });
       })
       .catch(err => console.log(err));
   };
@@ -140,7 +157,16 @@ class CasoDetailDialog extends Component {
   getRecursosMunicipales = async () => {
     await Axios.get(port + "recursosmunicipales")
       .then(res => {
-        this.setState({ recursosMunicipales: res.data });
+        let array = new Array();
+        array = res.data;
+        let newObj = {};
+        for (let c = 0; c < array.length; c++) {
+          newObj[array[c].id_recursos] = array[c].tipo;
+        }
+        this.setState({
+          recursosMunicipales: res.data,
+          recursosSelect: newObj
+        });
       })
       .catch(err => console.log(err));
   };
@@ -176,8 +202,15 @@ class CasoDetailDialog extends Component {
     };
   };
 
-  getTableColumns = () => {
-    return [
+  render() {
+    const { vals } = this.props;
+
+    const tableIcons = this.getTableIcons();
+
+    const options = {
+      resizableColumns: "true"
+    };
+    const columns = [
       {
         title: "ID Caso",
         field: "id_caso",
@@ -242,6 +275,7 @@ class CasoDetailDialog extends Component {
       {
         title: "Recursos Municipales",
         field: "recursos_muni",
+        // lookup: this.state.recursosMunicipales,
         render: rowData => {
           let json = JSON.parse(rowData.recursos_muni);
           let array = new Array();
@@ -330,15 +364,6 @@ class CasoDetailDialog extends Component {
         field: "tratamiento"
       }
     ];
-  };
-
-  render() {
-    const { vals } = this.props;
-    const tableIcons = this.getTableIcons();
-    const columns = this.getTableColumns();
-    const options = {
-      resizableColumns: "true"
-    };
 
     return (
       <div>

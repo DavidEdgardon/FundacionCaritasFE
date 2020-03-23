@@ -80,7 +80,15 @@ class Pacients extends Component {
     this.setState({ isLoading: true });
     await Axios.get(port + "api/paciente")
       .then(res => {
-        this.setState({ list: res.data });
+        let data = new Array();
+        let newData = new Array();
+        data = res.data;
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].borrado == 1) {
+            newData.push(data[i]);
+          }
+        }
+        this.setState({ list: newData });
       })
       .catch(error => {
         console.log(error);
