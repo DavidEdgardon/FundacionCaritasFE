@@ -94,6 +94,8 @@ class FormCases extends Component {
   continue = e => {
     e.preventDefault();
     this.props.newStep();
+    console.log("Justo antes de entrar al estado ocupacion");
+    console.log(this.props.vals.EstadoOcupacion);
     actions.savePatients(this.props);
   };
   back = e => {
@@ -103,6 +105,8 @@ class FormCases extends Component {
   render() {
     const card_background = grey[200];
     const { vals, handleChange, handleLocal, handleCheckBox } = this.props;
+    console.log("Soy yo EstadoOcupacion");
+    console.log(vals.EstadoOcupacion);
     var radioval = "";
     if (vals.VUrbana) {
       radioval = "VUrbana";
@@ -111,6 +115,7 @@ class FormCases extends Component {
     }
     return (
       <div>
+        {console.log(vals.EstadoOcupacion)}
         <Grid
           container
           justify="flex-end"

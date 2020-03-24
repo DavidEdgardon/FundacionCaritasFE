@@ -58,11 +58,15 @@ class Index extends Component {
       CAlcoholismo: false,
       COtros: false,
       VUrbana: false,
-      VRural: false
+      VRural: false,
+      IdExiste: -1
     };
   }
   handleChange = (event, input) => {
     this.setState({ [input]: event.target.value });
+    console.log("Ocurrio un cambio");
+    console.log(input);
+    console.log(event.target.value);
   };
 
   handleLocal = event => {
@@ -146,7 +150,8 @@ class Index extends Component {
       VRural,
       Ninos,
       Ninas,
-      Otros
+      Otros,
+      IdExiste
     } = this.state;
     const vals = {
       NombreD,
@@ -203,7 +208,8 @@ class Index extends Component {
       VRural,
       Ninos,
       Ninas,
-      Otros
+      Otros,
+      IdExiste
     };
 
     switch (this.state.steps) {

@@ -14,6 +14,14 @@ export const savePatients = params => {
   const gender = params.vals.Genero;
   const state = params.vals.EstadoCivil;
   const profession = params.vals.Oficio;
+  let IdExiste = params.vals.IdExiste;
+  let departamento = Number(params.vals.Departamento); // Imitando el codigo chancho de mis compañeros xd
+
+  /*Importante
+  Por favor refactoricen estos formularios
+  */
+
+  console.log("Refactorizar urgentemente");
 
   let education_id = 0;
   switch (params.vals.Educacion) {
@@ -38,6 +46,7 @@ export const savePatients = params => {
     default:
       education_id = 1;
   }
+  education_id = Number(params.vals.Educacion);
 
   const mun = params.Parroquia;
   let city_id = 0;
@@ -52,37 +61,43 @@ export const savePatients = params => {
       city_id = 4;
   }
 
-  const occupancy_state = params.EstadoOcupacion === "remunerado" ? 1 : 2;
+  let occupancy_state = 0;
+  occupancy_state = Number(params.vals.EstadoOcupacion);
+  console.log("Soy el IdExiste");
+  console.log(IdExiste);
+  if (IdExiste == -1) {
+    try {
+      var body = format.PACIENTES_POST_Y_PUT(
+        id,
+        name,
+        last_name,
+        age,
+        gender,
+        profession,
+        parseInt(state),
+        occupancy_state,
+        education_id,
+        departamento
+      );
 
-  try {
-    var body = format.PACIENTES_POST_Y_PUT(
-      id,
-      name,
-      last_name,
-      age,
-      gender,
-      profession,
-      parseInt(state),
-      occupancy_state,
-      education_id,
-      city_id
-    );
-
-    var response = axios
-      .post(port + "/paciente/", body, {
-        headers: {
-          "content-type": "application/json"
-        }
-      })
-      .then(res => {
-        const id_paciente = res.data[0].IDPACIENTE;
-        createCase(params, id_paciente);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  } catch (e) {
-    console.log(e);
+      var response = axios
+        .post(port + "/paciente/", body, {
+          headers: {
+            "content-type": "application/json"
+          }
+        })
+        .then(res => {
+          console.log(body);
+          console.log(res);
+          const id_paciente = res.data[0].IDPACIENTE;
+          createCase(params, id_paciente);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    } catch (e) {
+      console.log(e);
+    }
   }
 };
 
@@ -160,6 +175,7 @@ const createCase = (params, patient_id) => {
       }
     })
     .then(res => {
+      console.log(body);
       console.log(res);
     })
     .catch(error => {

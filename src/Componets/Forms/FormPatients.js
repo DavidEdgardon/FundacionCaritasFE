@@ -76,7 +76,7 @@ class FormPatients extends Component {
 
   generateOcupationType = () => {
     return this.state.estadoOcupacion.map(item => {
-      return <option value={item.id_educacion}>{item.tipo}</option>;
+      return <option value={item.id_estado}>{item.tipo}</option>;
     });
   };
 
