@@ -91,12 +91,18 @@ class FormCases extends Component {
     });
   };
 
-  continue = e => {
+  continue = async e => {
     e.preventDefault();
     this.props.newStep();
-    console.log("Justo antes de entrar al estado ocupacion");
-    console.log(this.props.vals.EstadoOcupacion);
-    actions.savePatients(this.props);
+
+    let id = await actions.savePatients(this.props);
+    let event = {
+      target: {
+        value: id
+      }
+    };
+    this.props.handleChange(event, "IdExiste");
+    console.log(id);
   };
   back = e => {
     e.preventDefault();

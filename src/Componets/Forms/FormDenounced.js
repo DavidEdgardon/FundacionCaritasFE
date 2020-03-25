@@ -8,6 +8,7 @@ import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import NativeSelect from "@material-ui/core/NativeSelect";
 import grey from "@material-ui/core/colors/grey";
+import Axios from "axios";
 const port = "http://localhost:3001/api";
 class FormDenounced extends Component {
   constructor() {
@@ -15,11 +16,13 @@ class FormDenounced extends Component {
     this.state = {
       departamentos: [],
       estadosCiviles: [],
-      educacion: []
+      educacion: [],
+      parroquia: []
     };
   }
 
   componentDidMount() {
+    this.getParroquia();
     fetch(port + "/estadocivil")
       .then(result => result.json())
       .then(data => {
@@ -37,6 +40,12 @@ class FormDenounced extends Component {
       });
   }
 
+  getParroquia = () => {
+    Axios.get(port + "/municipio")
+      .then(res => this.setState({ parroquia: res.data }))
+      .catch(error => console.log(error));
+  };
+
   generateCivilState = () => {
     return this.state.estadosCiviles.map(item => {
       return <option value={item.id_estadoc}>{item.estado}</option>;
@@ -52,6 +61,12 @@ class FormDenounced extends Component {
   generateDepartamentos = () => {
     return this.state.departamentos.map(item => {
       return <option value={item.id_departamento}>{item.nombre}</option>;
+    });
+  };
+
+  generateParroquiaType = () => {
+    return this.state.parroquia.map(item => {
+      return <option value={item.id_municipio}>{item.nombre}</option>;
     });
   };
 
@@ -147,14 +162,18 @@ class FormDenounced extends Component {
                   </Grid>
                   <Grid item sm={4}>
                     <Paper>
-                      <Input
+                      <NativeSelect
                         disableUnderline={true}
-                        id="localidad_d"
-                        placeholder=" Localidad"
+                        id="beneficiario-parroquia"
                         fullWidth
-                        defaultValue={vals.LocalidadD}
                         onChange={e => handleChange(e, "LocalidadD")}
-                      />
+                        value={vals.LocalidadD}
+                      >
+                        <option value="" disabled>
+                          Beneficiario por parroquia
+                        </option>
+                        {this.generateParroquiaType()}
+                      </NativeSelect>
                     </Paper>
                   </Grid>
                 </Grid>

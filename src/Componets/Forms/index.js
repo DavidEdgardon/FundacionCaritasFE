@@ -50,18 +50,25 @@ class Index extends Component {
       COng: false,
       CJuzgado: false,
       CFiscal: false,
-      Ninos: "",
-      Ninas: "",
-      Otros: "",
+      Ninos: "0",
+      Ninas: "0",
+      Otros: "0",
       CEconomica: false,
       CInfidelidad: false,
       CAlcoholismo: false,
       COtros: false,
       VUrbana: false,
       VRural: false,
-      IdExiste: -1
+      IdExiste: -1,
+      TipoViolencia: {
+        psicologica: false,
+        fisica: false,
+        economica: "",
+        sexual: ""
+      }
     };
   }
+
   handleChange = (event, input) => {
     this.setState({ [input]: event.target.value });
     console.log("Ocurrio un cambio");
@@ -81,12 +88,17 @@ class Index extends Component {
   };
 
   handleCheckBox = (event, input) => {
+    console.log("State antes " + input);
+    console.log(this.state[input]);
+    console.log("Checked");
+    console.log(event.target.checked);
     if (event.target.checked) {
       this.setState({ [input]: true });
     } else {
       this.setState({ [input]: false });
     }
   };
+
   newStep = () => {
     this.setState({ steps: this.state.steps + 1 });
   };

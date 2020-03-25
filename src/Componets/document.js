@@ -34,7 +34,8 @@ export class Form3 extends Component {
     this.state = {
       departamentos: [],
       estadoCivil: [],
-      tipoEducacion: []
+      tipoEducacion: [],
+      parroquia: []
     };
   }
 
@@ -47,6 +48,7 @@ export class Form3 extends Component {
     await this.getDepartamentos();
     await this.getEstadoCivil();
     await this.getTipoEducacion();
+    await this.getParroquia();
     console.log(this.state.tipoEducacion);
     let ninos, ninas, otros;
     if (this.props.vals.VPsicologica) {
@@ -113,6 +115,23 @@ export class Form3 extends Component {
     await Axios.get(port + "educacion")
       .then(res => this.setState({ tipoEducacion: res.data }))
       .catch(error => console.log(error));
+  };
+
+  getParroquia = async () => {
+    await Axios.get(port + "municipio")
+      .then(res => this.setState({ parroquia: res.data }))
+      .catch(error => console.log(error));
+  };
+
+  parroquiaToString = id => {
+    let result = "";
+    for (let i = 0; i < this.state.parroquia.length; i++) {
+      if (this.state.parroquia[i].id_municipio == id) {
+        result = this.state.parroquia[i].nombre;
+        break;
+      }
+    }
+    return result;
   };
 
   deparamentoToString = id => {
@@ -255,10 +274,12 @@ export class Form3 extends Component {
                   </td>
                   <td className="c6" colSpan="2" rowSpan="1">
                     <p className="c2">
-                      <span className="c8">LOCALIDAD</span>
+                      <span className="c8">BENEFICIARIO POR PARROQUIA</span>
                     </p>
                     <p className="c13">
-                      <span className="c7">{vals.Localidad}</span>
+                      <span className="c7">
+                        {this.parroquiaToString(vals.Parroquia)}
+                      </span>
                     </p>
                   </td>
                 </tr>
@@ -326,7 +347,11 @@ export class Form3 extends Component {
                       <span className="c8">CANTIDAD BENEFICIARIOS</span>
                     </p>
                     <p className="c13">
-                      <span className="c7">{cant}</span>
+                      <span className="c7">
+                        {Number(vals.Ninos) +
+                          Number(vals.Ninas) +
+                          Number(vals.Otros)}
+                      </span>
                     </p>
                   </td>
                   <td className="c6" colSpan="2" rowSpan="1">
@@ -407,10 +432,12 @@ export class Form3 extends Component {
                   </td>
                   <td className="c6" colSpan="2" rowSpan="1">
                     <p className="c2">
-                      <span className="c8">LOCALIDAD</span>
+                      <span className="c8">BENEFICIARIO POR PARROQUIA</span>
                     </p>
                     <p className="c13">
-                      <span className="c7">{vals.LocalidadD}</span>
+                      <span className="c7">
+                        {this.parroquiaToString(vals.LocalidadD)}
+                      </span>
                     </p>
                   </td>
                 </tr>
