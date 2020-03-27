@@ -103,7 +103,7 @@ class ConfigReport extends Component {
         let result = this.getCantEnter(text.substring(i, text.length));
         console.log(result.cant);
         if (result.cant > 1) {
-          array.push(this.spacer(result.cant));
+          array.push(this.spacer(result.cant - 1));
         } //*/
         i = i + result.pos;
       } else {
@@ -177,6 +177,7 @@ class ConfigReport extends Component {
     Axios.post(port + "config/savereporte", body)
       .then(res => {
         console.log(res);
+        window.confirm("Se guardo exitosamente");
       })
       .catch(err => console.log(err));
   };

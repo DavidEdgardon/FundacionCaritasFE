@@ -111,7 +111,7 @@ class ReportPantientDialog extends Component {
     let imgBody = await this.getDataToPDF("#pdf");
     let docPDF = new jsPDF();
     docPDF.addImage(imgLogo, "JPEG", 20, 20);
-    docPDF.addImage(imgBody, "JPEG", 20, 120);
+    docPDF.addImage(imgBody, "JPEG", 20, 100);
     //Print PDF
     docPDF.autoPrint();
     docPDF.output("dataurlnewwindow");
@@ -235,7 +235,7 @@ class ReportPantientDialog extends Component {
         let result = this.getCantEnter(text.substring(i, text.length));
         console.log(result.cant);
         if (result.cant > 1) {
-          array.push(this.spacer(result.cant));
+          array.push(this.spacer(result.cant - 1));
         } //*/
         i = i + result.pos;
       } else {
