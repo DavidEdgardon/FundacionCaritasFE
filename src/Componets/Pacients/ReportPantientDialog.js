@@ -94,11 +94,15 @@ class ReportPantientDialog extends Component {
       apellido: this.state.pacienteData.apellidos,
       tipo_constancia: this.state.report
     };
+    let id = this.state.casoData.id_paciente;
     let comment = prompt("Comentario", "");
-    body.comentario = comment != null ? comment : "";
-    await this.postHistorial(body);
-
-    await this.postUsuarioModifico(username);
+     
+    if(comment != null){ 
+      body.comentario = comment;
+    await this.postHistorial(body,id);
+    await this.postUsuarioModifico(username,id);
+    }
+  
   };
 
   getCasoData = id => {
@@ -120,12 +124,20 @@ class ReportPantientDialog extends Component {
       .catch(error => console.log(error));
   };
 
-  postHistorial = async body => {
-    console.log(body);
+  postHistorial = async (body,id) => {
+    Axios.post(port + "constancia_creacion/" + id,body)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(error => console.log(error));
   };
 
-  postUsuarioModifico = async usuario => {
-    console.log(usuario);
+  postUsuarioModifico = async (usuario,id) => {
+    Axios.post(port + "paciente_modificacion/" + id,{usuario})
+    .then(res => {
+      console.log(res);
+    })
+    .catch(error => console.log(error));
   };
 
   getBodyReport1 = () => {

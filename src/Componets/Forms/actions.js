@@ -90,6 +90,8 @@ export const savePatients = async params => {
           const id_paciente = res.data[0].IDPACIENTE;
           IdExiste = id_paciente;
           createCase(params, id_paciente);
+          let usuario = localStorage.getItem("usuario");
+          postUsuarioCreacion(usuario,id_paciente);
         })
         .catch(error => {
           console.log(error);
@@ -122,6 +124,8 @@ export const savePatients = async params => {
           //const id_paciente = res.data[0].IDPACIENTE;
           console.log(res);
           updateCaso(params, IdExiste); //updateCaso
+          let usuario = localStorage.getItem("usuario");
+          postUsuarioModifico(usuario,IdExiste);
         })
         .catch(error => {
           console.log(error);
@@ -352,4 +356,20 @@ const updateCasoDataExtra = (tipo_violencia, recursos, causas, idPaciente) => {
     .put(port + "/caso/extradata/" + idPaciente, body, { headers })
     .then(res => console.log(res))
     .catch(error => console.log(error));
+};
+
+const postUsuarioCreacion = async (usuario,id) => {
+  axios.post(port + "/paciente_creacion/" + id,{usuario})
+  .then(res => {
+    console.log(res);
+  })
+  .catch(error => console.log(error));
+};
+
+const postUsuarioModifico = async (usuario,id) => {
+  axios.post(port + "/paciente_modificacion/" + id,{usuario})
+  .then(res => {
+    console.log(res);
+  })
+  .catch(error => console.log(error));
 };
