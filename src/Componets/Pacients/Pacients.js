@@ -208,10 +208,10 @@ class Pacients extends Component {
 
   deletePaciente = async id => {
     // if (window.confirm("¿Está seguro que desea eliminar a " + name + "?")) {
-    await Axios.delete(port + `api/caso/paciente/${id}`).then(res =>
+    await Axios.get(port + `api/caso/delete/${id}`).then(res =>
       console.log(res.data)
     );
-    await Axios.delete(port + `api/paciente/${id}`).then(res =>
+    await Axios.get(port + `api/paciente/delete/${id}`).then(res =>
       console.log(res.data)
     );
     // this.fetchPacientsData();
