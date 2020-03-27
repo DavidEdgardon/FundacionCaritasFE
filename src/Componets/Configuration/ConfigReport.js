@@ -9,6 +9,8 @@ import "../../styles/dialogReport.css";
 import logo from "../../assets/logocaritas.png";
 import TextField from "@material-ui/core/TextField";
 import "../../styles/dialogReport.css";
+import { Dialog, AppBar, Toolbar } from "@material-ui/core";
+import { Alert, AlertTitle } from "@material-ui/lab";
 const port = "http://localhost:3001/api/";
 
 class ConfigReport extends Component {
@@ -177,9 +179,26 @@ class ConfigReport extends Component {
     Axios.post(port + "config/savereporte", body)
       .then(res => {
         console.log(res);
-        window.confirm("Se guardo exitosamente");
+        //window.confirm("Se guardo exitosamente");
+        this.showDialogAlert(res === "okay");
       })
       .catch(err => console.log(err));
+  };
+
+  showDialogAlert = isError => {
+    this.setState({ isError: isError });
+    this.openAlertDialog();
+    setTimeout(() => {
+      this.closeAlertDialog();
+    }, 3000);
+  };
+
+  openAlertDialog = () => {
+    this.setState({ open: true });
+  };
+
+  closeAlertDialog = () => {
+    this.setState({ open: false });
   };
 
   render() {
@@ -252,6 +271,26 @@ class ConfigReport extends Component {
               </ListGroup>
             </Col>
           </Row>
+          {this.state.open && (
+            <Dialog
+              open={this.state.open}
+              onClose={this.closeAlertDialog}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              {this.state.isError ? (
+                <Alert severity="error">
+                  <AlertTitle>Operación fallida</AlertTitle>
+                  Intente más tarde.
+                </Alert>
+              ) : (
+                <Alert severity="success" style={{ width: "100%" }}>
+                  <AlertTitle>Operación existosa</AlertTitle>
+                  Datos del reporte actualizado correctamente.
+                </Alert>
+              )}
+            </Dialog>
+          )}
         </div>
       );
     } else {

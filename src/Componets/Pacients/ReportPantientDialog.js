@@ -33,7 +33,9 @@ class ReportPantientDialog extends Component {
       casoData: {},
       pacienteData: {},
       value: "",
-      value2: ""
+      value2: "",
+      open: false,
+      isError: false
     };
   }
 
