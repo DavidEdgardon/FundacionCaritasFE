@@ -225,6 +225,15 @@ class Pacients extends Component {
     ).then(res => console.log(res));
   };
 
+  postUsuarioModifico = async id => {
+    let usuario = localStorage.getItem("user");
+    Axios.post(port + "api/paciente_modificacion/" + id, { usuario })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(error => console.log(error));
+  };
+
   render() {
     const { open, open2, hide, selectedRow } = this.state;
     const vals = { open, open2, hide, selectedRow };
@@ -378,6 +387,7 @@ class Pacients extends Component {
                     if (oldData) {
                       // Update in DataBase
                       this.updatePaciente(newData);
+                      this.postUsuarioModifico(oldData.id_paciente);
                       // Update in the state
                       this.setState(prevState => {
                         const list = [...prevState.list];
