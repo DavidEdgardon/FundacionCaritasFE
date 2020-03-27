@@ -29,7 +29,9 @@ class ReportPantientDialog extends Component {
       Id: 0,
       reporte: {},
       report: "Termino",
-      reporteHTML: []
+      reporteHTML: [],
+      casoData: {},
+      pacienteData: {}
     };
   }
 
@@ -52,6 +54,8 @@ class ReportPantientDialog extends Component {
     let report = isAbandon ? "Abandono" : "Termino";
     this.setState({ report: report });
     this.getData(id);
+    this.getCasoData(id);
+    this.getPacienteData(id);
   };
 
   getData = id => {
@@ -71,6 +75,7 @@ class ReportPantientDialog extends Component {
   };
 
   printPDF = async () => {
+    await this.generateHistorial();
     let imgLogo = await this.getDataToPDF("#logo");
     let imgBody = await this.getDataToPDF("#pdf");
     let docPDF = new jsPDF();
@@ -79,6 +84,48 @@ class ReportPantientDialog extends Component {
     //Print PDF
     docPDF.autoPrint();
     docPDF.output("dataurlnewwindow");
+  };
+
+  generateHistorial = async () => {
+    let username = localStorage.getItem("user");
+    let body = {
+      num_expediente: this.state.casoData.numero_expediente,
+      nombre: this.state.pacienteData.nombres,
+      apellido: this.state.pacienteData.apellidos,
+      tipo_constancia: this.state.report
+    };
+    let comment = prompt("Comentario", "");
+    body.comentario = comment != null ? comment : "";
+    await this.postHistorial(body);
+
+    await this.postUsuarioModifico(username);
+  };
+
+  getCasoData = id => {
+    Axios.get(port + "caso/detail/" + id)
+      .then(res => {
+        this.setState({ casoData: res.data[0] });
+        console.log(res.data[0]);
+      })
+      .catch(error => console.log(error));
+  };
+
+  getPacienteData = id => {
+    console.log("Hola soy el ID " + id);
+    Axios.get(port + "paciente/" + id)
+      .then(res => {
+        this.setState({ pacienteData: res.data[0] });
+        console.log(res.data[0]);
+      })
+      .catch(error => console.log(error));
+  };
+
+  postHistorial = async body => {
+    console.log(body);
+  };
+
+  postUsuarioModifico = async usuario => {
+    console.log(usuario);
   };
 
   getBodyReport1 = () => {

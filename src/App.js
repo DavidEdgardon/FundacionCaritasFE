@@ -4,9 +4,9 @@ import Appbar from "./Componets/appBar/appBar";
 import Index from "./Componets/index";
 import "./App.css";
 import Mayre from "mayre";
-import Axios from 'axios';
+import Axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-const port = 'http://localhost:3001';
+const port = "http://localhost:3001";
 
 class App extends Component {
   constructor(props) {
@@ -33,12 +33,14 @@ class App extends Component {
   handleUser = loggedUser => {
     this.setState({
       token: loggedUser.token,
-      user: loggedUser.usuario,
+      user: loggedUser.user,
       password: loggedUser.contraseña,
       rol: loggedUser.rol
     });
-     localStorage.setItem('token', this.state.token)
-     localStorage.setItem('rol', this.state.rol)
+    console.log("Hola soy el usuario " + loggedUser.user);
+    localStorage.setItem("token", this.state.token);
+    localStorage.setItem("rol", this.state.rol);
+    localStorage.setItem("user", this.state.user);
   };
 
   logins() {
@@ -53,49 +55,50 @@ class App extends Component {
   };
 
   componentWillMount() {
-    this.setState({ token: localStorage.getItem("token"), rol:localStorage.getItem("rol")});
+    this.setState({
+      token: localStorage.getItem("token"),
+      rol: localStorage.getItem("rol")
+    });
   }
 
   render() {
-    if(this.state.rol != ''){
-    return (
-      <div>
-        <Mayre
-          of={
-            <Appbar
-              handleChangeValue={this.handleChangeValue}
-              values={this.state.value}
-              logout={this.logout}
-              login={this.state.login}
-              rol={this.state.rol}
-              handleUser={this.handleUser}
-            />
-          }
-          when={() => this.logins()}
-        />
+    if (this.state.rol != "") {
+      return (
+        <div>
+          <Mayre
+            of={
+              <Appbar
+                handleChangeValue={this.handleChangeValue}
+                values={this.state.value}
+                logout={this.logout}
+                login={this.state.login}
+                rol={this.state.rol}
+                handleUser={this.handleUser}
+              />
+            }
+            when={() => this.logins()}
+          />
 
-        <Mayre
-          of={
-            <div style={{ padding: "20px", marginTop: "30px" }}>
-              <Index values={this.state.value} rol={this.state.rol} />
-            </div>
-          }
-          or={
-            <Login
-              handelLogin={this.handelLogin}
-              login={this.state.login}
-              handleUser={this.handleUser}
-            />
-          }
-          when={() => this.logins()}
-        />
-      </div>
-    );
-  }else{
-    return(<div>
-      cargando
-    </div>)
-  }
+          <Mayre
+            of={
+              <div style={{ padding: "20px", marginTop: "30px" }}>
+                <Index values={this.state.value} rol={this.state.rol} />
+              </div>
+            }
+            or={
+              <Login
+                handelLogin={this.handelLogin}
+                login={this.state.login}
+                handleUser={this.handleUser}
+              />
+            }
+            when={() => this.logins()}
+          />
+        </div>
+      );
+    } else {
+      return <div>cargando</div>;
+    }
   }
 }
 
