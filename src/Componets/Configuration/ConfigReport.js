@@ -25,15 +25,8 @@ class ConfigReport extends Component {
   }
 
   componentDidMount = async e => {
-    //this.getData(id);
     await this.getCampos();
     this.getData();
-    //Get Text
-    /*let text =
-      "-juzgado-\nCiudad.\n\n\n\n\nPastoral Social Caritas Diócesis de San Pedro Sula, notifica que el Sr. (a): -nombres- -apellidos- -numero_expediente- -tipo_reporte- el esquema de Consejería, al que fue remitido por el -juzgado-.\nSe extiende la presente constancia en la ciudad de San Pedro Sula, departamento de Cortes el -fecha-.\n\n\n\n\n\nLic. -terapeuta-\n-codigo-"; //*/
-
-    /* this.setState({ value: text });
-    this.textToBody(text);*/
   };
 
   getData = () => {
@@ -110,7 +103,7 @@ class ConfigReport extends Component {
         let result = this.getCantEnter(text.substring(i, text.length));
         console.log(result.cant);
         if (result.cant > 1) {
-          array.push(this.spacer(result.cant));
+          array.push(this.spacer(result.cant - 1));
         } //*/
         i = i + result.pos;
       } else {
@@ -177,6 +170,18 @@ class ConfigReport extends Component {
     this.setState({ showPDf: show });
   };
 
+  savePDF = () => {
+    let body = {
+      text: this.state.value
+    };
+    Axios.post(port + "config/savereporte", body)
+      .then(res => {
+        console.log(res);
+        window.confirm("Se guardo exitosamente");
+      })
+      .catch(err => console.log(err));
+  };
+
   render() {
     if (!this.state.showPDf) {
       return (
@@ -189,12 +194,20 @@ class ConfigReport extends Component {
                 </Button>
               </Col>
               <Col sm={2}>
-                <Button variant="contained" color="secondary">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => this.getData()}
+                >
                   Resetear
                 </Button>
               </Col>
               <Col sm={2}>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => this.savePDF()}
+                >
                   Guardar
                 </Button>
               </Col>
