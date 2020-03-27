@@ -28,7 +28,8 @@ class ReportPantientDialog extends Component {
     this.state = {
       Id: 0,
       reporte: {},
-      report: "Termino"
+      report: "Termino",
+      reporteHTML: []
     };
   }
 
@@ -48,8 +49,8 @@ class ReportPantientDialog extends Component {
   componentDidMount = e => {
     let id = this.props.vals.selectedRow[0].id_paciente;
     let isAbandon = this.props.vals.isAbandon;
-    let reporte = isAbandon ? "Abandono" : "Termino";
-    this.setState({ report: reporte });
+    let report = isAbandon ? "Abandono" : "Termino";
+    this.setState({ report: report });
     this.getData(id);
   };
 
@@ -99,9 +100,80 @@ class ReportPantientDialog extends Component {
   getBodyReport2 = () => {
     return (
       "Se extiende la presente constancia en la ciudad de San Pedro Sula, departamento de Cortes el " +
-      this.state.reporte.date +
+      this.state.reporte.fecha +
       "."
     );
+  };
+
+  textToBody = text => {
+    let newText = "";
+    for (let i = 0; i < text.length; i++) {
+      //Get Campos
+      if (text[i] === "-") {
+        let result = this.getToken("-", text.substring(i + 1, text.length));
+        i = i + result.pos;
+        newText = newText + this.state.reporte[result.token];
+      } else {
+        newText = newText + text[i];
+      }
+    }
+    this.setState({ value2: newText });
+    this.textToHTML(newText);
+  };
+
+  getToken = (init, text) => {
+    let result = {
+      token: "",
+      pos: 0
+    };
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] == init) {
+        result.token = text.substring(0, i); //Obtengo el nombre del campo
+        result.pos = i + 1; // Le mando nueva posicion para continuar recorriendo la cadenar tomando en cuenta que esta funcion se llama dentro de un for el cual aumenta la cantidad de i +1
+        break;
+      }
+    }
+    return result;
+  };
+
+  textToHTML = text => {
+    let array = new Array();
+    let tmpText = "";
+    for (let i = 0; i < text.length; i++) {
+      if (text.substring(i, i + 1) === "\n") {
+        array.push(<p key={i}>{tmpText}</p>);
+        tmpText = "";
+        let result = this.getCantEnter(text.substring(i, text.length));
+        console.log(result.cant);
+        if (result.cant > 1) {
+          array.push(this.spacer(result.cant));
+        } //*/
+        i = i + result.pos;
+      } else {
+        tmpText = tmpText + text[i];
+        if (i + 1 == text.length) {
+          array.push(<p key={i}>{tmpText}</p>);
+        }
+      }
+    }
+    console.log(array);
+    this.setState({ reporteHTML: array });
+  };
+
+  getCantEnter = text => {
+    let result = {
+      cant: 0,
+      pos: 0
+    };
+    for (let i = 0; i < text.length; i++) {
+      if (text.substring(i, i + 1) === "\n") {
+        result.cant++;
+        result.pos = i;
+      } else {
+        break;
+      }
+    }
+    return result;
   };
 
   spacer = n => {
