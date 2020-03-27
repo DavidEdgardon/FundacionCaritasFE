@@ -55,7 +55,7 @@ class ReportPantientDialog extends Component {
     let isAbandon = this.props.vals.isAbandon;
     let report = isAbandon ? "Abandono" : "Termino";
     this.setState({ report: report });
-    await this.getData(id);
+    await this.getData(id,report);
     await this.getCasoData(id);
     await this.getPacienteData(id);
     await this.getText();
@@ -74,8 +74,9 @@ class ReportPantientDialog extends Component {
       .catch(err => console.log(err));
   };
 
-  getData = async id => {
-    let report = this.state.report;
+  getData = async (id,report) => {
+ //   let report = this.state.report;
+    console.log(report);
     await Axios.get(port + "reporte/" + `${id}`)
       .then(res => {
         this.setState({
