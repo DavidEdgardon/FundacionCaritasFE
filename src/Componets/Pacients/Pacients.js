@@ -213,10 +213,10 @@ class Pacients extends Component {
 
   deletePaciente = async id => {
     // if (window.confirm("¿Está seguro que desea eliminar a " + name + "?")) {
-    await Axios.delete(port + `api/caso/paciente/${id}`).then(res =>
+    await Axios.get(port + `api/caso/delete/${id}`).then(res =>
       console.log(res.data)
     );
-    await Axios.delete(port + `api/paciente/${id}`).then(res =>
+    await Axios.get(port + `api/paciente/delete/${id}`).then(res =>
       console.log(res.data)
     );
     // this.fetchPacientsData();
@@ -249,6 +249,15 @@ class Pacients extends Component {
 		});
 	}
 	return excelData;
+  };
+
+  postUsuarioModifico = async id => {
+    let usuario = localStorage.getItem("user");
+    Axios.post(port + "api/paciente_modificacion/" + id, { usuario })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(error => console.log(error));
   };
 
   render() {
@@ -404,6 +413,7 @@ class Pacients extends Component {
                     if (oldData) {
                       // Update in DataBase
                       this.updatePaciente(newData);
+                      this.postUsuarioModifico(oldData.id_paciente);
                       // Update in the state
                       this.setState(prevState => {
                         const list = [...prevState.list];

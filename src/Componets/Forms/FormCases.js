@@ -91,10 +91,18 @@ class FormCases extends Component {
     });
   };
 
-  continue = e => {
+  continue = async e => {
     e.preventDefault();
     this.props.newStep();
-    actions.savePatients(this.props);
+
+    let id = await actions.savePatients(this.props);
+    let event = {
+      target: {
+        value: id
+      }
+    };
+    this.props.handleChange(event, "IdExiste");
+    console.log(id);
   };
   back = e => {
     e.preventDefault();
@@ -103,6 +111,8 @@ class FormCases extends Component {
   render() {
     const card_background = grey[200];
     const { vals, handleChange, handleLocal, handleCheckBox } = this.props;
+    console.log("Soy yo EstadoOcupacion");
+    console.log(vals.EstadoOcupacion);
     var radioval = "";
     if (vals.VUrbana) {
       radioval = "VUrbana";
@@ -111,6 +121,7 @@ class FormCases extends Component {
     }
     return (
       <div>
+        {console.log(vals.EstadoOcupacion)}
         <Grid
           container
           justify="flex-end"
