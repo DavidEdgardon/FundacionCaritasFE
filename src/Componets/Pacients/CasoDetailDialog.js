@@ -31,6 +31,12 @@ import Checkbox from "@material-ui/core/Checkbox";
 
 import "../../styles/dialogReport.css";
 
+import ReactExport from "react-export-excel";
+
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
+
 const url = "https://apicaritas.herokuapp.com/api/paciente/";
 const port = "http://localhost:3001/api/";
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -200,6 +206,66 @@ class CasoDetailDialog extends Component {
       SortArrow: ArrowUpward,
       ViewColumn: ViewColumn
     };
+  };
+  
+  getExcelDataCase() {
+	var causas = "";
+	var tipo_violencia = "";
+	var recursos_muni = "";
+	var json;
+	var excelData = [];
+	var dataList = this.state.casoData;
+	
+	for(var pos=0; pos<dataList.length; pos++) {
+		
+		json = JSON.parse(dataList[pos].causas);
+		causas = "";
+		for (let clave in json) {
+			if (json.hasOwnProperty(clave)) {
+			  let data = json[clave];
+			  if (typeof data === "number") {
+				causas = causas + this.state.causasViolencia[data - 1].causa + ","; 
+			  } else {
+				causas = causas + data + ","
+			  }
+			}
+		}
+		causas = causas.slice(0,-1);
+		
+		json = JSON.parse(dataList[pos].tipo_violencia);
+		tipo_violencia = "";
+		for (let clave in json) {
+			if (json.hasOwnProperty(clave)) {
+			  tipo_violencia = tipo_violencia + this.state.tipoViolencia[json[clave] - 1].tipo + ","
+			}
+		}
+		tipo_violencia = tipo_violencia.slice(0,-1);
+		
+		json = JSON.parse(dataList[pos].recursos_muni);
+		recursos_muni = "";
+		for (let clave in json) {
+			if (json.hasOwnProperty(clave)) {
+			  recursos_muni = recursos_muni + this.state.recursosMunicipales[json[clave] - 1].tipo + ",";
+			}
+		}
+		recursos_muni = recursos_muni.slice(0,-1);
+		
+		excelData.push({ 
+						"id_caso": dataList[pos].id_caso,
+						"nombre": dataList[pos].nombre, 
+						"condicion": dataList[pos].condicion, 
+						"terapeuta": dataList[pos].terapeuta, 
+						"causa": causas,
+						"recursos_muni": recursos_muni,
+						"tipo_violencia": tipo_violencia,
+						"juez": dataList[pos].juez, 
+						"municipio": dataList[pos].municipio,
+						"estado_atencion" : dataList[pos].estado_atencion,
+						"ubicacion_violencia": dataList[pos].ubicacion_violencia, 
+						"tratamiento": dataList[pos].tratamiento
+		});
+	}
+	return excelData;
   };
 
   render() {
@@ -424,6 +490,25 @@ class CasoDetailDialog extends Component {
                 }
               }}
             />
+			
+			<br/>
+			<ExcelFile filename="Caso" element={<button>Exportar Excel</button>}>
+				<ExcelSheet data={this.getExcelDataCase()} name="Caso">
+					<ExcelColumn label="Id Caso" value="id_caso"/>
+					<ExcelColumn label="Nombre" value="nombre"/>
+					<ExcelColumn label="Condicion" value="condicion"/>
+					<ExcelColumn label="Terapeuta" value="terapeuta"/>
+					<ExcelColumn label="Causa" value="causa"/>
+					<ExcelColumn label="Recursos Municipalidad" value="recursos_muni"/>
+					<ExcelColumn label="Tipo Violencia" value="tipo_violencia"/>
+					<ExcelColumn label="Juez" value="juez"/>
+					<ExcelColumn label="Municipio" value="municipio"/>
+					<ExcelColumn label="Estado Atencion" value="estado_atencion"/>
+					<ExcelColumn label="Ubicacion Violencia" value="ubicacion_violencia"/>
+					<ExcelColumn label="Tratamiento" value="tratamiento"/>
+				</ExcelSheet>				
+			</ExcelFile>
+					  
           </div>
         </Dialog>
 

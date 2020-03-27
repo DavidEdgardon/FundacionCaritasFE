@@ -26,6 +26,11 @@ import MaterialTable from "material-table";
 import Grid from "@material-ui/core/Grid";
 import ReportPantientDialog from "./ReportPantientDialog";
 import CasoDetailDialog from "./CasoDetailDialog";
+import ReactExport from "react-export-excel";
+
+const ExcelFile = ReactExport.ExcelFile;
+const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
+const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 const port = "http://localhost:3001/";
 
@@ -224,6 +229,27 @@ class Pacients extends Component {
       newData
     ).then(res => console.log(res));
   };
+  
+  getExcelDataPatient() {
+	var excelData = [];
+	var dataList = this.state.list;
+	for(var pos=0; pos<dataList.length; pos++) {
+		excelData.push({ 
+						"correlativo": pos,
+						"identidad": dataList[pos].identidad, 
+						"nombres": dataList[pos].nombres, 
+						"apellidos": dataList[pos].apellidos, 
+						"edad": dataList[pos].edad, 
+						"genero": dataList[pos].genero, 
+						"oficio": dataList[pos].oficio, 
+						"estado_civil": this.state.estadoCivilSelect[dataList[pos].id_estadoc], 
+						"trabajo": this.state.trabajoSelect[dataList[pos].id_estado], 
+						"educacion": this.state.educacionSelect[dataList[pos].id_educacion], 
+						"departamento": this.state.departamentoSelect[dataList[pos].id_departamento]
+		});
+	}
+	return excelData;
+  };
 
   postUsuarioModifico = async id => {
     let usuario = localStorage.getItem("user");
@@ -413,6 +439,24 @@ class Pacients extends Component {
                 })
             }}
           />
+		  
+		  <br/>
+		  <ExcelFile filename="Pacientes" element={<button>Exportar Excel</button>}>
+                <ExcelSheet data={this.getExcelDataPatient()} name="Pacientes">
+                    <ExcelColumn label="Correlativo" value="correlativo"/>
+                    <ExcelColumn label="No. Identidad" value="identidad"/>
+                    <ExcelColumn label="Nombres" value="nombres"/>
+					<ExcelColumn label="Apellidos" value="apellidos"/>
+                    <ExcelColumn label="Edad" value="edad"/>
+                    <ExcelColumn label="Genero" value="genero"/>
+					<ExcelColumn label="Oficio" value="oficio"/>
+                    <ExcelColumn label="Estado Civil" value="estado_civil"/>
+                    <ExcelColumn label="Trabajo" value="trabajo"/>
+					<ExcelColumn label="Educacion" value="educacion"/>
+                    <ExcelColumn label="Departamento" value="departamento"/>
+                </ExcelSheet>				
+		  </ExcelFile>
+
         </div>
 
         {this.state.open ? (
