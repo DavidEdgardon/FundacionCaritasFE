@@ -90,7 +90,7 @@ export const savePatients = async params => {
           const id_paciente = res.data[0].IDPACIENTE;
           IdExiste = id_paciente;
           createCase(params, id_paciente);
-          let usuario = localStorage.getItem("usuario");
+          let usuario = localStorage.getItem("user");
           postUsuarioCreacion(usuario,id_paciente);
         })
         .catch(error => {
@@ -124,7 +124,7 @@ export const savePatients = async params => {
           //const id_paciente = res.data[0].IDPACIENTE;
           console.log(res);
           updateCaso(params, IdExiste); //updateCaso
-          let usuario = localStorage.getItem("usuario");
+          let usuario = localStorage.getItem("user");
           postUsuarioModifico(usuario,IdExiste);
         })
         .catch(error => {
