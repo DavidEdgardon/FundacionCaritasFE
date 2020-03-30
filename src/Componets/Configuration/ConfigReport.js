@@ -9,6 +9,8 @@ import "../../styles/dialogReport.css";
 import logo from "../../assets/logocaritas.png";
 import TextField from "@material-ui/core/TextField";
 import "../../styles/dialogReport.css";
+import { Dialog, AppBar, Toolbar } from "@material-ui/core";
+import { Alert, AlertTitle } from "@material-ui/lab";
 const port = "http://localhost:3001/api/";
 
 class ConfigReport extends Component {
@@ -25,15 +27,8 @@ class ConfigReport extends Component {
   }
 
   componentDidMount = async e => {
-    //this.getData(id);
     await this.getCampos();
     this.getData();
-    //Get Text
-    /*let text =
-      "-juzgado-\nCiudad.\n\n\n\n\nPastoral Social Caritas Diócesis de San Pedro Sula, notifica que el Sr. (a): -nombres- -apellidos- -numero_expediente- -tipo_reporte- el esquema de Consejería, al que fue remitido por el -juzgado-.\nSe extiende la presente constancia en la ciudad de San Pedro Sula, departamento de Cortes el -fecha-.\n\n\n\n\n\nLic. -terapeuta-\n-codigo-"; //*/
-
-    /* this.setState({ value: text });
-    this.textToBody(text);*/
   };
 
   getData = () => {
@@ -110,7 +105,7 @@ class ConfigReport extends Component {
         let result = this.getCantEnter(text.substring(i, text.length));
         console.log(result.cant);
         if (result.cant > 1) {
-          array.push(this.spacer(result.cant));
+          array.push(this.spacer(result.cant - 1));
         } //*/
         i = i + result.pos;
       } else {
@@ -177,6 +172,35 @@ class ConfigReport extends Component {
     this.setState({ showPDf: show });
   };
 
+  savePDF = () => {
+    let body = {
+      text: this.state.value
+    };
+    Axios.post(port + "config/savereporte", body)
+      .then(res => {
+        console.log(res);
+        //window.confirm("Se guardo exitosamente");
+        this.showDialogAlert(res === "okay");
+      })
+      .catch(err => console.log(err));
+  };
+
+  showDialogAlert = isError => {
+    this.setState({ isError: isError });
+    this.openAlertDialog();
+    setTimeout(() => {
+      this.closeAlertDialog();
+    }, 3000);
+  };
+
+  openAlertDialog = () => {
+    this.setState({ open: true });
+  };
+
+  closeAlertDialog = () => {
+    this.setState({ open: false });
+  };
+
   render() {
     if (!this.state.showPDf) {
       return (
@@ -189,12 +213,20 @@ class ConfigReport extends Component {
                 </Button>
               </Col>
               <Col sm={2}>
-                <Button variant="contained" color="secondary">
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => this.getData()}
+                >
                   Resetear
                 </Button>
               </Col>
               <Col sm={2}>
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => this.savePDF()}
+                >
                   Guardar
                 </Button>
               </Col>
@@ -239,6 +271,26 @@ class ConfigReport extends Component {
               </ListGroup>
             </Col>
           </Row>
+          {this.state.open && (
+            <Dialog
+              open={this.state.open}
+              onClose={this.closeAlertDialog}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              {this.state.isError ? (
+                <Alert severity="error">
+                  <AlertTitle>Operación fallida</AlertTitle>
+                  Intente más tarde.
+                </Alert>
+              ) : (
+                <Alert severity="success" style={{ width: "100%" }}>
+                  <AlertTitle>Operación existosa</AlertTitle>
+                  Datos del reporte actualizado correctamente.
+                </Alert>
+              )}
+            </Dialog>
+          )}
         </div>
       );
     } else {

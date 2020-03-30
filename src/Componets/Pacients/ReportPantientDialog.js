@@ -31,7 +31,11 @@ class ReportPantientDialog extends Component {
       report: "Termino",
       reporteHTML: [],
       casoData: {},
-      pacienteData: {}
+      pacienteData: {},
+      value: "",
+      value2: "",
+      open: false,
+      isError: false
     };
   }
 
@@ -48,19 +52,49 @@ class ReportPantientDialog extends Component {
     this.props.handleClose();
   };
 
-  componentDidMount = e => {
+  componentDidMount = async e => {
     let id = this.props.vals.selectedRow[0].id_paciente;
     let isAbandon = this.props.vals.isAbandon;
     let report = isAbandon ? "Abandono" : "Termino";
     this.setState({ report: report });
-    this.getData(id);
-    this.getCasoData(id);
-    this.getPacienteData(id);
+    await this.getData(id,report);
+    await this.getCasoData(id);
+    await this.getPacienteData(id);
+    await this.getText();
   };
 
-  getData = id => {
-    Axios.get(port + "reporte/" + `${id}`)
-      .then(res => this.setState({ reporte: res.data }))
+  getText = async () => {
+    await Axios.get(port + "config/getreporte")
+      .then(res => {
+        let text = res.data;
+        text = text + ".";
+        text = text.substring(0, text.length - 1);
+        console.log(text);
+        this.setState({ value: text });
+        this.textToBody(text);
+      })
+      .catch(err => console.log(err));
+  };
+
+  getData = async (id,report) => {
+ //   let report = this.state.report;
+    console.log(report);
+    await Axios.get(port + "reporte/" + `${id}`)
+      .then(res => {
+        this.setState({
+          reporte: {
+            juzgado: res.data.juez,
+            nombres: res.data.nombres,
+            apellidos: res.data.apellidos,
+            numero_expediente: res.data.numero_expediente,
+            tipo_reporte: report,
+            fecha: res.data.fecha,
+            terapeuta: res.data.nombre,
+            codigo: res.data.codigo
+          }
+        });
+        console.log(res.data);
+      })
       .catch(err => console.log(err));
   };
 
@@ -80,7 +114,7 @@ class ReportPantientDialog extends Component {
     let imgBody = await this.getDataToPDF("#pdf");
     let docPDF = new jsPDF();
     docPDF.addImage(imgLogo, "JPEG", 20, 20);
-    docPDF.addImage(imgBody, "JPEG", 20, 120);
+    docPDF.addImage(imgBody, "JPEG", 20, 100);
     //Print PDF
     docPDF.autoPrint();
     docPDF.output("dataurlnewwindow");
@@ -96,13 +130,12 @@ class ReportPantientDialog extends Component {
     };
     let id = this.state.casoData.id_paciente;
     let comment = prompt("Comentario", "");
-     
-    if(comment != null){ 
+
+    if (comment != null) {
       body.comentario = comment;
-    await this.postHistorial(body,id);
-    await this.postUsuarioModifico(username,id);
+      await this.postHistorial(body, id);
+      await this.postUsuarioModifico(username, id);
     }
-  
   };
 
   getCasoData = id => {
@@ -124,23 +157,23 @@ class ReportPantientDialog extends Component {
       .catch(error => console.log(error));
   };
 
-  postHistorial = async (body,id) => {
-    Axios.post(port + "constancia_creacion/" + id,body)
-    .then(res => {
-      console.log(res);
-    })
-    .catch(error => console.log(error));
+  postHistorial = async (body, id) => {
+    Axios.post(port + "constancia_creacion/" + id, body)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(error => console.log(error));
   };
 
-  postUsuarioModifico = async (usuario,id) => {
-    Axios.post(port + "paciente_modificacion/" + id,{usuario})
-    .then(res => {
-      console.log(res);
-    })
-    .catch(error => console.log(error));
+  postUsuarioModifico = async (usuario, id) => {
+    Axios.post(port + "paciente_modificacion/" + id, { usuario })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(error => console.log(error));
   };
 
-  getBodyReport1 = () => {
+  /*getBodyReport1 = () => {
     return (
       "Pastoral Social Caritas Diócesis de San Pedro Sula, notifica que el Sr. (a): " +
       this.state.reporte.nombres +
@@ -162,7 +195,7 @@ class ReportPantientDialog extends Component {
       this.state.reporte.fecha +
       "."
     );
-  };
+  };*/
 
   textToBody = text => {
     let newText = "";
@@ -205,7 +238,7 @@ class ReportPantientDialog extends Component {
         let result = this.getCantEnter(text.substring(i, text.length));
         console.log(result.cant);
         if (result.cant > 1) {
-          array.push(this.spacer(result.cant));
+          array.push(this.spacer(result.cant - 1));
         } //*/
         i = i + result.pos;
       } else {
@@ -248,8 +281,8 @@ class ReportPantientDialog extends Component {
 
   render() {
     const { vals } = this.props;
-    let bodyReport1 = this.getBodyReport1();
-    let bodyReport2 = this.getBodyReport2();
+    /* let bodyReport1 = this.getBodyReport1();
+    let bodyReport2 = this.getBodyReport2();*/
 
     return (
       <div>
@@ -308,19 +341,7 @@ class ReportPantientDialog extends Component {
           <Row>
             <span className="center-spacer"></span>
             <div id="pdf" style={{ width: "17.59cm" }}>
-              <p>
-                {this.state.reporte.juez ===
-                "Juzgado Especial de Violencia Domestica"
-                  ? "Juzgado de Ejecución Contra la Violencia Domestica"
-                  : this.state.reporte.juez}
-              </p>
-              <p>Ciudad.</p>
-              {this.spacer(4)}
-              <p>{bodyReport1}</p>
-              <p>{bodyReport2}</p>
-              {this.spacer(5)}
-              <p>{"Lic. " + this.state.reporte.nombre}</p>
-              <p>{this.state.reporte.codigo}</p>
+              {this.state.reporteHTML}
             </div>
 
             <span className="center-spacer"></span>
